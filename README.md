@@ -2,6 +2,15 @@
 
 ## Integration Guide
 
+Xsolla team created a script to simplify the integration of PayStation into your website.
+
+[See Demo](http://livedemo.xsolla.com/paystation/)
+
+Features:
+* the most appropriate interface depending on the type of device
+* tracking of events happening with PayStation
+* compliant with the AMD and CommonJS specification for defining modules
+
 ### Getting the code
 
 #### Linking to Xsolla CDN
@@ -13,14 +22,12 @@ Script is located on our CDN and is available here: [https://xsolla.cachefly.ne
 If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
 
 ```
-bower install paystation3-embed
+$ bower install paystation3-embed
 ```
 
 ### Script Loading
 
-Note: *After script loading you should initialize widget with some parameters.*
-
-#### Asynchronous loading with callback (RECOMMENDED)
+#### Asynchronous loading with callback (recommended)
 
 ```
 <script>
@@ -73,6 +80,8 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 });
 ```
 
+Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](http://developers.xsolla.com/).
+
 ### Widget Options
 
 * access_token — Access token
@@ -93,19 +102,33 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 
 You can refer to the widget object, using the following methods:
 
-* init — parameter setting
-* open — opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
+* init — Parameter setting
+* open — Opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
 * on — Attach an event handler function for one or more events to the widget
 * off — Remove an event handler
 
 #### Events
 
-init
-open
-load
-close
-status
-status-invoice
-status-delivering
-status-troubled
-status-done
+* init — Event on widget initialization
+* open — Event on opening of the widget
+* load — Event after payment interface (PayStation) was loaded
+* close — Event after payment interface (PayStation) was closed
+* status — Event when the user was moved on the status page
+* status-invoice — Event when the user was moved on the status page, but the payment is not yet completed
+* status-delivering — Event when the user was moved on the status page, payment was completed, and we’re sending payment notification
+* status-done — Event when the user was moved on the status page, and the payment was completed successfully
+* status-troubled — Event when the user was moved on the status page, but the payment failed
+
+##### Example
+
+```
+XPayStationWidget.on('status', function (event, data) {
+    console.log(data.paymentInfo); // {
+                                   //   email: "main@example.com",
+                                   //   invoice: 140381877,
+                                   //   status: "invoice",
+                                   //   userId: "user_1",
+                                   //   virtualCurrencyAmount: 100
+                                   // }
+});
+```

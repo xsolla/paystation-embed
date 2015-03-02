@@ -72,7 +72,7 @@ module.exports = (function () {
 
         var triggerSplitStatus = _.bind(function (data) {
             if (data && data.paymentInfo && data.paymentInfo.status) {
-                this.triggerEvent('status-' + data.paymentInfo.status);
+                this.triggerEvent('status-' + data.paymentInfo.status, data);
             }
         }, this);
 

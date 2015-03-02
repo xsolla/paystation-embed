@@ -37,7 +37,7 @@ $ bower install paystation3-embed
     var s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//XSOLLA_CDN/widget.js";
+    s.src = "//xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js";
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
@@ -49,7 +49,7 @@ $ bower install paystation3-embed
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//XSOLLA_CDN/widget.js"></script>
+<script src="//xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'

@@ -2,7 +2,7 @@
 
 ## Integration Guide
 
-Xsolla team created a script to simplify the integration of PayStation into your website.
+Xsolla team created a script to simplify the integration of PayStation into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](http://developers.xsolla.com/api.html#token).
 
 [See Demo](http://livedemo.xsolla.com/paystation/)
 
@@ -80,8 +80,6 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 });
 ```
 
-Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](http://developers.xsolla.com/).
-
 ### Widget Options
 
 * access_token — Access token
@@ -100,12 +98,18 @@ Please note: for the proper work of widget please make sure that you pass the �
 
 ### Widget API
 
+#### Methods
+
 You can refer to the widget object, using the following methods:
 
-* init — Parameter setting
+* init(options) — Parameter setting
 * open — Opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
-* on — Attach an event handler function for one or more events to the widget
-* off — Remove an event handler
+* on(events, handler) — Attach an event handler function for one or more events to the widget.
+    * **events** (string) — One or more space-separated event types, such as "open" or "close status".
+    * **handler** (function) — A function to execute when the event is triggered.
+* off(events, [handler]) — Remove an event handler. Calling .off() with no arguments removes all handlers attached to the widget.
+    * **events** (string) — One or more space-separated event types.
+    * **handler** (function) — A handler function previously attached for the event(s).
 
 #### Events
 
@@ -131,4 +135,17 @@ XPayStationWidget.on('status', function (event, data) {
                                    //   virtualCurrencyAmount: 100
                                    // }
 });
+```
+#### Going to the payment
+
+To open PayStation you can use .open() method or set "data-xpaystation-widget-open" attribute to HTML-element associated with the beginning of the payment, e.g. Payment button.
+
+JavaScript call:
+```
+XPayStationWidget.open();
+```
+
+HTML example:
+```
+<button data-xpaystation-widget-open>Buy Credits</button>
 ```

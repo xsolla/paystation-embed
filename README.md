@@ -2,20 +2,18 @@
 
 ## Integration Guide
 
----
-
 ### Getting the code
 
 #### Linking to Xsolla CDN
 
-
+Script is located on our CDN and is available here: [https://xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js](https://xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
-
+If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
 
 ```
-bower install paystation3-widget
+bower install paystation3-embed
 ```
 
 ### Script Loading
@@ -93,8 +91,10 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 
 ### Widget API
 
-* init — 
-* open - 
+You can refer to the widget object, using the following methods:
+
+* init — parameter setting
+* open — opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
 * on — Attach an event handler function for one or more events to the widget
 * off — Remove an event handler
 

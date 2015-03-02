@@ -1,0 +1,26 @@
+{
+  "name": "paystation3-widget",
+  "version": "1.0.0",
+  "authors": [
+    "Andrey Salnikov <a.salnikov@xsolla.com>"
+  ],
+  "description": "PayStation 3 Integration Widget",
+  "main": "dist/widget.js",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "homepage": "http://xsolla.com",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "lodash": "~3.2.0"
+  }
+}

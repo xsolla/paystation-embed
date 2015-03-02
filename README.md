@@ -21,7 +21,7 @@ Script is located on our CDN and is available here: [https://xsolla.cachefly.ne
 
 If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
 
-```
+``` bash
 $ bower install paystation3-embed
 ```
 
@@ -29,7 +29,7 @@ $ bower install paystation3-embed
 
 #### Asynchronous loading with callback (recommended)
 
-```
+``` javascript
 <script>
     var options = {
         access_token: 'abcdef1234567890abcdef1234567890'
@@ -48,7 +48,7 @@ $ bower install paystation3-embed
 
 #### Synchronous loading (blocks content)
 
-```
+``` javascript
 <script src="//XSOLLA_CDN/widget.js"></script>
 <script>
     XPayStationWidget.init({
@@ -61,7 +61,7 @@ $ bower install paystation3-embed
 
 If your project uses CommonJS module format, you can access the widget by require()
 
-```
+``` javascript
 var XPayStationWidget = require('PATH_TO_WIDGET/embed');
 XPayStationWidget.init({
    access_token: 'abcdef1234567890abcdef1234567890'
@@ -72,7 +72,7 @@ XPayStationWidget.init({
 
 Also you can use widget with RequireJS loader
 
-```
+``` javascript
 define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     XPayStationWidget.init({
        access_token: 'abcdef1234567890abcdef1234567890'
@@ -125,7 +125,7 @@ You can refer to the widget object, using the following methods:
 
 ##### Example
 
-```
+``` javascript
 XPayStationWidget.on('status', function (event, data) {
     console.log(data.paymentInfo); // {
                                    //   email: "main@example.com",
@@ -141,11 +141,11 @@ XPayStationWidget.on('status', function (event, data) {
 To open PayStation you can use .open() method or set "data-xpaystation-widget-open" attribute to HTML-element associated with the beginning of the payment, e.g. Payment button.
 
 JavaScript call:
-```
+``` javascript
 XPayStationWidget.open();
 ```
 
 HTML example:
-```
+``` html
 <button data-xpaystation-widget-open>Buy Credits</button>
 ```

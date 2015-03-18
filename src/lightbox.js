@@ -156,7 +156,7 @@ module.exports = (function () {
                 return [key, bodyElement.css(key)];
             }));
 
-            if (global.window.innerWidth > bodyElement.get(0).clientWidth) {
+            if (global.window.innerWidth > bodyElement.outerWidth(true)) {
                 var bodyPad = parseInt((bodyElement.css('paddingRight') || 0), 10);
                 bodyElement.css({
                     'paddingRight': bodyPad + this.measureScrollbar(),

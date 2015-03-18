@@ -1,6 +1,6 @@
 {
-  "name": "paystation3-widget",
-  "version": "1.0.0",
+  "name": "xsolla-paystation-widget",
+  "version": "1.0.1",
   "authors": [
     "Andrey Salnikov <a.salnikov@xsolla.com>"
   ],

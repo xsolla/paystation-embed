@@ -1,6 +1,6 @@
 {
-  "name": "paystation3-widget",
-  "version": "1.0.0",
+  "name": "xsolla-paystation-widget",
+  "version": "1.0.1",
   "description": "PayStation 3 Integration Widget",
   "dependencies": {},
   "devDependencies": {

@@ -91,6 +91,10 @@ $lightbox-class: '.' + $lightbox-prefix;
   }
 
   .spinner-round {
+    margin: {
+      top: -23px;
+      left: -23px;
+    }
     -webkit-animation: #{$lightbox-prefix}-spin 3s infinite linear;
     animation: #{$lightbox-prefix}-spin 3s infinite linear;
   }

@@ -15,14 +15,14 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js](https://xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js](https://xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
 If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
 
 ``` bash
-$ bower install paystation3-embed
+$ bower install xsolla-paystation-embed
 ```
 
 ### Script Loading
@@ -37,7 +37,7 @@ $ bower install paystation3-embed
     var s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js";
+    s.src = "//xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js";
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
@@ -49,7 +49,7 @@ $ bower install paystation3-embed
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//xsolla.cachefly.net/embed/paystation/1.0.0/widget.min.js"></script>
+<script src="//xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'
@@ -82,19 +82,20 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 
 ### Widget Options
 
-* access_token — Access token
-* lightbox - Options for modal dialog that contains frame of PayStation
-    * width — Width of lightbox frame, default is '850px'
-    * height — Height of lightbox frame, default is '100%'
-    * zIndex — Property controls the vertical stacking order, default is 1000
-    * overlayOpacity — Opacity of the overlay (from 0 to 1), default is '.6'
-    * overlayBackground — Background of the overlay, default is '#000000'
-    * closeByClick — Toggle if clicking the overlay should close lightbox, default true
-    * closeByKeyboard — Toggle if pressing of ESC key should close lightbox, default true
-    * contentBackground — Background of the frame, default is '#ffffff'
-    * contentMargin — margin around frame, default '10px',
-    * spinner — Type of animated loading spinner, can be 'xsolla' or round, default is the first one
-    * spinnerColor — Color of the spinner, not set by default
+* **access_token** — Access token
+* **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead secure.xsolla.com
+* **lightbox** — Options for modal dialog that contains frame of PayStation
+    * **width** — Width of lightbox frame, default is '850px'
+    * **height** — Height of lightbox frame, default is '100%'
+    * **zIndex** — Property controls the vertical stacking order, default is 1000
+    * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
+    * **overlayBackground** — Background of the overlay, default is '#000000'
+    * **closeByClick** — Toggle if clicking the overlay should close lightbox, default true
+    * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
+    * **contentBackground** — Background of the frame, default is '#ffffff'
+    * **contentMargin** — margin around frame, default '10px',
+    * **spinner** — Type of animated loading spinner, can be 'xsolla' or round, default is the first one
+    * **spinnerColor** — Color of the spinner, not set by default
 
 ### Widget API
 
@@ -102,26 +103,26 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 
 You can refer to the widget object, using the following methods:
 
-* init(options) — Parameter setting
-* open — Opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
-* on(events, handler) — Attach an event handler function for one or more events to the widget.
+* **init(options)** — Parameter setting
+* **open** — Opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
+* **on(events, handler)** — Attach an event handler function for one or more events to the widget.
     * **events** (string) — One or more space-separated event types, such as "open" or "close status".
     * **handler** (function) — A function to execute when the event is triggered.
-* off(events, [handler]) — Remove an event handler. Calling .off() with no arguments removes all handlers attached to the widget.
+* **off(events, [handler])** — Remove an event handler. Calling .off() with no arguments removes all handlers attached to the widget.
     * **events** (string) — One or more space-separated event types.
     * **handler** (function) — A handler function previously attached for the event(s).
 
 #### Events
 
-* init — Event on widget initialization
-* open — Event on opening of the widget
-* load — Event after payment interface (PayStation) was loaded
-* close — Event after payment interface (PayStation) was closed
-* status — Event when the user was moved on the status page
-* status-invoice — Event when the user was moved on the status page, but the payment is not yet completed
-* status-delivering — Event when the user was moved on the status page, payment was completed, and we’re sending payment notification
-* status-done — Event when the user was moved on the status page, and the payment was completed successfully
-* status-troubled — Event when the user was moved on the status page, but the payment failed
+* **init** — Event on widget initialization
+* **open** — Event on opening of the widget
+* **load** — Event after payment interface (PayStation) was loaded
+* **close** — Event after payment interface (PayStation) was closed
+* **status** — Event when the user was moved on the status page
+* **status-invoice** — Event when the user was moved on the status page, but the payment is not yet completed
+* **status-delivering** — Event when the user was moved on the status page, payment was completed, and we’re sending payment notification
+* **status-done** — Event when the user was moved on the status page, and the payment was completed successfully
+* **status-troubled** — Event when the user was moved on the status page, but the payment failed
 
 ##### Example
 

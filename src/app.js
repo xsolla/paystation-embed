@@ -13,9 +13,10 @@ module.exports = (function () {
     }
 
     var PAYSTATION_URL = 'https://secure.xsolla.com/paystation2/?';
-    //var PAYSTATION_URL = 'http://localhost:3000/#?';
+    var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var DEFAULT_CONFIG = {
         access_token: null,
+        sandbox: false,
         lightbox: {}
     };
     var EVENT_NAMESPACE = '.xpaystation-widget';
@@ -77,7 +78,7 @@ module.exports = (function () {
         }, this);
 
         var device = new Device;
-        var url = PAYSTATION_URL + $.param({
+        var url = (this.config.sandbox ? SANDBOX_PAYSTATION_URL : PAYSTATION_URL) + $.param({
             access_token: this.config.access_token
         });
 

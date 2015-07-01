@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var _ = require('lodash');
+var version = require('version');
 var PostMessage = require('postmessage');
 
 module.exports = (function () {
@@ -27,10 +28,10 @@ module.exports = (function () {
     var TEMPLATE = '<div class="<%-prefix%>">' +
         '<div class="<%-prefix%>-overlay"></div>' +
         '<div class="<%-prefix%>-content <%-prefix%>-content__hidden">' +
-            '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0"></iframe>' +
+        '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0"></iframe>' +
         '</div>' +
         '<div class="<%-prefix%>-spinner"><%=spinner%></div>' +
-    '</div>';
+        '</div>';
 
     var SPINNERS = {
         xsolla: require('spinners/xsolla.svg'),
@@ -61,7 +62,7 @@ module.exports = (function () {
     };
 
     /** Public Members **/
-    LightBox.prototype.openFrame = function(url, options) {
+    LightBox.prototype.openFrame = function (url, options) {
         options = _.extend({}, DEFAULT_OPTIONS, options);
 
         var bodyElement = $(global.document.body);
@@ -91,13 +92,13 @@ module.exports = (function () {
             background: options.contentBackground
         });
 
-        if(options.spinnerColor) {
+        if (options.spinnerColor) {
             lightBoxSpinnerElement.find('path').css({
                 fill: options.spinnerColor
             });
         }
 
-        if(options.closeByClick) {
+        if (options.closeByClick) {
             lightBoxOverlayElement.on('click', _.bind(function () {
                 this.closeFrame();
             }, this));
@@ -193,7 +194,7 @@ module.exports = (function () {
             showContent();
         });
         message.on('widget-detection', function () {
-            message.send('widget-detected');
+            message.send('widget-detected', {version: version});
         });
         message.on('widget-close', _.bind(function () {
             this.closeFrame();
@@ -222,7 +223,7 @@ module.exports = (function () {
         this.triggerEvent('open');
     };
 
-    LightBox.prototype.closeFrame = function() {
+    LightBox.prototype.closeFrame = function () {
         this.triggerEvent('close');
     };
 

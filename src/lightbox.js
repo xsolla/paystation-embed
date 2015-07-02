@@ -21,6 +21,7 @@ module.exports = (function () {
         contentMargin: '10px',
         closeByKeyboard: true,
         closeByClick: true,
+        modal: false,
         spinner: 'xsolla',
         spinnerColor: null
     };
@@ -194,7 +195,7 @@ module.exports = (function () {
             showContent();
         });
         message.on('widget-detection', function () {
-            message.send('widget-detected', {version: version});
+            message.send('widget-detected', {version: version, modal: options.modal});
         });
         message.on('widget-close', _.bind(function () {
             this.closeFrame();
@@ -208,12 +209,14 @@ module.exports = (function () {
 
         // Clean up after close
         this.on('close', function (event) {
-            message.off();
-            bodyElement.off(EVENT_NAMESPACE);
-            $.event.remove(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
-            lightBoxElement.remove();
-            resetScrollbar();
-            $(event.target).off(event);
+            if (!options.modal) {
+                message.off();
+                bodyElement.off(EVENT_NAMESPACE);
+                $.event.remove(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
+                lightBoxElement.remove();
+                resetScrollbar();
+                $(event.target).off(event);
+            }
         });
 
         lightBoxResize();

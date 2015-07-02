@@ -7,6 +7,10 @@ module.exports = (function () {
         this.eventObject = $({});
     }
 
+    var DEFAULT_OPTIONS = {
+        target: '_blank'
+    };
+
     /** Private Members **/
     ChildWindow.prototype.eventObject = null;
     ChildWindow.prototype.childWindow = null;
@@ -16,24 +20,13 @@ module.exports = (function () {
     };
 
     /** Public Members **/
-    ChildWindow.prototype.open = function(url) {
+    ChildWindow.prototype.open = function (url, options) {
+        options = _.extend({}, DEFAULT_OPTIONS, options);
+
         if (this.childWindow && !this.childWindow.closed) {
             this.childWindow.location.href = url;
         }
 
-        this.childWindow = global.window.open(url);
-        this.childWindow.focus();
-
-        var checkWindow = _.bind(function () {
-            if (this.childWindow) {
-                if (this.childWindow.closed) {
-                    this.triggerEvent('close');
-                } else {
-                    timer = global.setTimeout(checkWindow, 100);
-                }
-            }
-        }, this);
-        var timer = global.setTimeout(checkWindow, 100);
         this.on('close', _.bind(function (event) {
             if (timer) {
                 global.clearTimeout(timer);
@@ -50,6 +43,9 @@ module.exports = (function () {
             this.triggerEvent('load');
             $(event.target).off(event);
         }, this));
+        message.on('widget-detection', function () {
+            message.send('widget-detected', {version: version});
+        });
         message.on('status', _.bind(function (event, data) {
             self.triggerEvent('status', data);
         }, this));
@@ -61,9 +57,34 @@ module.exports = (function () {
         });
 
         this.triggerEvent('open');
+
+        switch (options.target) {
+            case '_self':
+                global.window.location.href = url;
+                break;
+            case '_parent':
+                global.window.parent.location.href = url;
+                break;
+            case '_blank':
+            default:
+                this.childWindow = global.window.open(url);
+                this.childWindow.focus();
+
+                var checkWindow = _.bind(function () {
+                    if (this.childWindow) {
+                        if (this.childWindow.closed) {
+                            this.triggerEvent('close');
+                        } else {
+                            timer = global.setTimeout(checkWindow, 100);
+                        }
+                    }
+                }, this);
+                var timer = global.setTimeout(checkWindow, 100);
+                break;
+        }
     };
 
-    ChildWindow.prototype.close = function() {
+    ChildWindow.prototype.close = function () {
         this.triggerEvent('close');
     };
 

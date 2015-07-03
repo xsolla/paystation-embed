@@ -11,20 +11,18 @@ var sassify = require('sassify');
 var stringify = require('stringify');
 var watchify = require('watchify');
 var gulpif = require('gulp-if');
-var fs = require('fs');
-var replaceTask = require('gulp-replace-task');
 
 function setupBrowserify(watch) {
     var bundleOptions = {
         cache: {},
         packageCache: {},
-        paths: ['./.tmp'],
+        paths: ['./src'],
         standalone: 'XPayStationWidget',
         fullPaths: false,
         debug: true
     };
-    var bundler = browserify('./.tmp/main.js', bundleOptions);
-    bundler.require('./.tmp/main.js', {entry: true, expose: 'main'});
+    var bundler = browserify('./src/main.js', bundleOptions);
+    bundler.require('./src/main.js', {entry: true, expose: 'main'});
     bundler.require('./bower_components/jquery/dist/jquery.js', {expose: 'jquery'});
     bundler.require('./bower_components/lodash/lodash.js', {expose: 'lodash'});
     bundler.transform({
@@ -70,13 +68,11 @@ function runBundle(bundler, watch) {
         .pipe(gulpif(watch, browserSync.reload({stream: true, once: true})));
 }
 
-gulp.task('build', ['version:generate'], function () {
+gulp.task('build', function () {
     setupBrowserify(false);
 });
 
-gulp.task('serve', ['version:generate'], function () {
-    setupBrowserify(true);
-
+gulp.task('browser-sync', function () {
     browserSync({
         startPath: '/index.html',
         server: {
@@ -85,27 +81,10 @@ gulp.task('serve', ['version:generate'], function () {
         port: 3100,
         ghostMode: false
     });
-
-    gulp.watch(['example/*.html']).on('change', browserSync.reload);
-    gulp.watch(['src/*.js', 'src/*.svg', 'src/*.scss'], ['version:generate']); //watchify will reload browsers
 });
 
-var bowerConfig = JSON.parse(fs.readFileSync('bower.json', 'utf-8'));
-gulp.task('version:generate', ['copyfiles'], function () {
-    return gulp.src(['./src/version.js'])
-        .pipe(replaceTask({
-            patterns: [
-                {
-                    json: {
-                        version: bowerConfig.version
-                    }
-                }
-            ]
-        }))
-        .pipe(gulp.dest('.tmp/'));
-});
+gulp.task('serve', ['browser-sync'], function () {
+    setupBrowserify(true);
 
-gulp.task('copyfiles', function() {
-    return gulp.src(['src/*', 'src/**/*'])
-        .pipe(gulp.dest('.tmp/'))
+    gulp.watch(['example/*.html']).on('change', browserSync.reload); //all the other files are managed by watchify
 });

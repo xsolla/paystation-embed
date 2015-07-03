@@ -94,7 +94,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
     * **contentBackground** — Background of the frame, default is '#ffffff'
     * **contentMargin** — margin around frame, default '10px',
-    * **spinner** — Type of animated loading spinner, can be 'xsolla' or round, default is the first one
+    * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round' or 'none', default is the first one
     * **spinnerColor** — Color of the spinner, not set by default
 
 ### Widget API

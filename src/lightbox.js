@@ -67,10 +67,13 @@ module.exports = (function () {
         options = _.extend({}, DEFAULT_OPTIONS, options);
 
         var bodyElement = $(global.document.body);
+        var spinner = options.spinner !== 'none' ?
+            options && SPINNERS[options.spinner] || _.values(SPINNERS)[0] :
+            '';
         var lightBoxElement = $(_.template(TEMPLATE)({
             prefix: CLASS_PREFIX,
             url: url,
-            spinner: options && SPINNERS[options.spinner] || _.values(SPINNERS)[0]
+            spinner: spinner
         }));
         var lightBoxOverlayElement = lightBoxElement.find('.' + CLASS_PREFIX + '-overlay');
         var lightBoxContentElement = lightBoxElement.find('.' + CLASS_PREFIX + '-content');
@@ -194,6 +197,12 @@ module.exports = (function () {
         message.on('dimensions widget-detection', function () {
             showContent();
         });
+
+        message.on('dimensions', function (event, data) {
+            if (options.autoSize && data.dimensions) {
+                lightBoxResize(data.dimensions.width + 'px', data.dimensions.height + 'px');
+            }
+        });
         message.on('widget-detection', function () {
             message.send('widget-detected', {version: version, modal: options.modal});
         });
@@ -219,7 +228,7 @@ module.exports = (function () {
             }
         });
 
-        lightBoxResize();
+        lightBoxResize(options.width, options.height);
         showSpinner();
         hideScrollbar();
 

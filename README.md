@@ -98,7 +98,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **contentMargin** — margin around frame, default '10px',
     * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round' or 'none', default is the first one
     * **spinnerColor** — Color of the spinner, not set by default
-* **child_window** — Options for child window that contains PayStation. Suitable for mobile version
+* **childWindow** — Options for child window that contains PayStation. Suitable for mobile version
     * **target** — The target option specifies where to open the Paystation window, can be '_blank', '_self', '_parent', default is '_blank'
 
 ### Widget API

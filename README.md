@@ -87,15 +87,19 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **lightbox** — Options for modal dialog that contains frame of PayStation
     * **width** — Width of lightbox frame, default is '850px'
     * **height** — Height of lightbox frame, default is '100%'
+    * **autoSize** - Auto size lightbox frame depending on Paystation size, default is true
     * **zIndex** — Property controls the vertical stacking order, default is 1000
     * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
     * **overlayBackground** — Background of the overlay, default is '#000000'
+    * **modal** - Lightbox frame cannot be closed, default false
     * **closeByClick** — Toggle if clicking the overlay should close lightbox, default true
     * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
     * **contentBackground** — Background of the frame, default is '#ffffff'
     * **contentMargin** — margin around frame, default '10px',
     * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round' or 'none', default is the first one
     * **spinnerColor** — Color of the spinner, not set by default
+* **child_window** — Options for child window that contains PayStation. Suitable for mobile version
+    * **target** — The target option specifies where to open the Paystation window, can be '_blank', '_self', '_parent', default is '_blank'
 
 ### Widget API
 

@@ -31,14 +31,15 @@ module.exports = (function () {
     var TEMPLATE = '<div class="<%-prefix%>">' +
         '<div class="<%-prefix%>-overlay"></div>' +
         '<div class="<%-prefix%>-content <%-prefix%>-content__hidden">' +
-        '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0"></iframe>' +
+            '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0"></iframe>' +
         '</div>' +
         '<div class="<%-prefix%>-spinner"><%=spinner%></div>' +
-        '</div>';
+    '</div>';
 
     var SPINNERS = {
         xsolla: require('spinners/xsolla.svg'),
-        round: require('spinners/round.svg')
+        round: require('spinners/round.svg'),
+        none: ' '
     };
 
     /** Private Members **/
@@ -70,13 +71,10 @@ module.exports = (function () {
         options = this.options;
 
         var bodyElement = $(global.document.body);
-        var spinner = options.spinner !== 'none' ?
-            options && SPINNERS[options.spinner] || _.values(SPINNERS)[0] :
-            '';
         var lightBoxElement = $(_.template(TEMPLATE)({
             prefix: CLASS_PREFIX,
             url: url,
-            spinner: spinner
+            spinner: options && SPINNERS[options.spinner] || _.values(SPINNERS)[0]
         }));
         var lightBoxOverlayElement = lightBoxElement.find('.' + CLASS_PREFIX + '-overlay');
         var lightBoxContentElement = lightBoxElement.find('.' + CLASS_PREFIX + '-content');

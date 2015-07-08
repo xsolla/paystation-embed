@@ -1,11 +1,13 @@
 var $ = require('jquery');
 var _ = require('lodash');
+var version = require('version');
 var PostMessage = require('postmessage');
 
 module.exports = (function () {
     function LightBox() {
         require('styles/lightbox.scss');
         this.eventObject = $({});
+        this.options = DEFAULT_OPTIONS;
     }
 
     var CLASS_PREFIX = 'xpaystation-widget-lightbox';
@@ -13,6 +15,7 @@ module.exports = (function () {
     var DEFAULT_OPTIONS = {
         width: '850px',
         height: '100%',
+        autoSize: true,
         zIndex: 1000,
         overlayOpacity: '.6',
         overlayBackground: '#000000',
@@ -20,6 +23,7 @@ module.exports = (function () {
         contentMargin: '10px',
         closeByKeyboard: true,
         closeByClick: true,
+        modal: false,
         spinner: 'xsolla',
         spinnerColor: null
     };
@@ -34,7 +38,8 @@ module.exports = (function () {
 
     var SPINNERS = {
         xsolla: require('spinners/xsolla.svg'),
-        round: require('spinners/round.svg')
+        round: require('spinners/round.svg'),
+        none: ' '
     };
 
     /** Private Members **/
@@ -61,8 +66,9 @@ module.exports = (function () {
     };
 
     /** Public Members **/
-    LightBox.prototype.openFrame = function(url, options) {
-        options = _.extend({}, DEFAULT_OPTIONS, options);
+    LightBox.prototype.openFrame = function (url, options) {
+        this.options = _.extend({}, this.options, options);
+        options = this.options;
 
         var bodyElement = $(global.document.body);
         var lightBoxElement = $(_.template(TEMPLATE)({
@@ -75,6 +81,11 @@ module.exports = (function () {
         var lightBoxIframeElement = lightBoxContentElement.find('.' + CLASS_PREFIX + '-content-iframe');
         var lightBoxSpinnerElement = lightBoxElement.find('.' + CLASS_PREFIX + '-spinner');
 
+        var psDimensions = {
+            width: '0px',
+            height: '0px'
+        };
+
         lightBoxElement.css({
             zIndex: options.zIndex
         });
@@ -85,19 +96,17 @@ module.exports = (function () {
         });
 
         lightBoxContentElement.css({
-            width: options.width,
-            height: options.height,
             margin: options.contentMargin,
             background: options.contentBackground
         });
 
-        if(options.spinnerColor) {
+        if (options.spinnerColor) {
             lightBoxSpinnerElement.find('path').css({
                 fill: options.spinnerColor
             });
         }
 
-        if(options.closeByClick) {
+        if (options.closeByClick) {
             lightBoxOverlayElement.on('click', _.bind(function () {
                 this.closeFrame();
             }, this));
@@ -124,8 +133,8 @@ module.exports = (function () {
             lightBoxContentElement.css({
                 top: 0,
                 left: 0,
-                width: options.width,
-                height: options.height
+                width: options.autoSize ? psDimensions.width : options.width,
+                height: options.autoSize ? psDimensions.height : options.height
             });
 
             var containerWidth = lightBoxElement.get(0).clientWidth,
@@ -179,9 +188,10 @@ module.exports = (function () {
 
         var loadTimer;
         lightBoxIframeElement.on('load', _.bind(function (event) {
+            var timeout = options.autoSize ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {
                 showContent();
-            }, 1000);
+            }, timeout);
             $(event.target).off(event);
         }, this));
 
@@ -189,11 +199,25 @@ module.exports = (function () {
 
         // Cross-window communication
         var message = new PostMessage(iframeWindow);
-        message.on('dimensions widget-detection', function () {
-            showContent();
-        });
+        if (!options.autoSize) {
+            message.on('dimensions widget-detection', function () {
+                showContent();
+            });
+        }
+        else {
+            message.on('dimensions', function (event, data) {
+                if (data.dimensions) {
+                    psDimensions = {
+                        width: data.dimensions.width + 'px',
+                        height: data.dimensions.height + 'px'
+                    };
+                    lightBoxResize();
+                }
+                showContent();
+            });
+        }
         message.on('widget-detection', function () {
-            message.send('widget-detected');
+            message.send('widget-detected', {version: version, modal: options.modal});
         });
         message.on('widget-close', _.bind(function () {
             this.closeFrame();
@@ -215,15 +239,19 @@ module.exports = (function () {
             $(event.target).off(event);
         });
 
-        lightBoxResize();
+        if (!options.autoSize) {
+            lightBoxResize();
+        }
         showSpinner();
         hideScrollbar();
 
         this.triggerEvent('open');
     };
 
-    LightBox.prototype.closeFrame = function() {
-        this.triggerEvent('close');
+    LightBox.prototype.closeFrame = function () {
+        if (!this.options.modal) {
+            this.triggerEvent('close');
+        }
     };
 
     LightBox.prototype.on = function () {

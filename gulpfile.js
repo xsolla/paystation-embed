@@ -10,39 +10,50 @@ var browserify = require('browserify');
 var sassify = require('sassify');
 var stringify = require('stringify');
 var watchify = require('watchify');
+var gulpif = require('gulp-if');
 
-var bundleOptions = watchify.args;
-bundleOptions.paths = ['./src'];
-bundleOptions.standalone = 'XPayStationWidget';
-bundleOptions.fullPaths = false;
-bundleOptions.debug = true;
+function setupBrowserify(watch) {
+    var bundleOptions = {
+        cache: {},
+        packageCache: {},
+        paths: ['./src'],
+        standalone: 'XPayStationWidget',
+        fullPaths: false,
+        debug: true
+    };
+    var bundler = browserify('./src/main.js', bundleOptions);
+    bundler.require('./src/main.js', {entry: true, expose: 'main'});
+    bundler.require('./bower_components/jquery/dist/jquery.js', {expose: 'jquery'});
+    bundler.require('./bower_components/lodash/lodash.js', {expose: 'lodash'});
+    bundler.transform({
+        outputStyle: 'compressed'
+    }, sassify);
 
-var bundler = watchify(browserify('./src/main.js', bundleOptions));
-bundler.require('./src/main.js', {entry: true, expose: 'main'});
-bundler.require('./bower_components/jquery/dist/jquery.js', {expose: 'jquery'});
-bundler.require('./bower_components/lodash/lodash.js', {expose: 'lodash'});
-
-bundler.transform({
-    outputStyle: 'compressed'
-}, sassify);
-
-bundler.transform(stringify({
-    extensions: ['.svg'],
-    minify: true,
-    minifier: {
+    bundler.transform(stringify({
         extensions: ['.svg'],
-        options: {
-            removeComments: true,
-            removeCommentsFromCDATA: true,
-            removeCDATASectionsFromCDATA: true,
-            collapseWhitespace: true
+        minify: true,
+        minifier: {
+            extensions: ['.svg'],
+            options: {
+                removeComments: true,
+                removeCommentsFromCDATA: true,
+                removeCDATASectionsFromCDATA: true,
+                collapseWhitespace: true
+            }
         }
+    }));
+
+    if (watch) {
+        bundler = watchify(bundler);
+        bundler.on('update', function () {  // on any dep update, runs the bundler
+            runBundle(bundler, watch);
+        });
     }
-}));
 
-bundler.on('update', bundle); // on any dep update, runs the bundler
+    runBundle(bundler, watch);
+}
 
-function bundle() {
+function runBundle(bundler, watch) {
     return bundler.bundle()
         // log errors if they happen
         .on('error', gutil.log.bind(gutil, 'Browserify Error'))
@@ -53,15 +64,15 @@ function bundle() {
         .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
         .pipe(uglify())
         .pipe(sourcemaps.write('./', {includeContent: true, sourceRoot: '.', debug: false})) // writes .map file
-        .pipe(browserSync.reload({stream: true, once: true}))
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulpif(watch, browserSync.reload({stream: true, once: true})));
 }
 
-gulp.task('scripts', function () {
-    return bundle();
+gulp.task('build', function () {
+    setupBrowserify(false);
 });
 
-gulp.task('browser-sync', ['scripts'], function() {
+gulp.task('browser-sync', function () {
     browserSync({
         startPath: '/index.html',
         server: {
@@ -73,5 +84,7 @@ gulp.task('browser-sync', ['scripts'], function() {
 });
 
 gulp.task('serve', ['browser-sync'], function () {
-    gulp.watch(['example/*.html', 'src/*.js', 'src/*.svg', 'src/*.scss'], ['scripts']);
+    setupBrowserify(true);
+
+    gulp.watch(['example/*.html']).on('change', browserSync.reload); //all the other files are managed by watchify
 });

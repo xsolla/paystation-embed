@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var _ = require('lodash');
+var version = require('version');
 var PostMessage = require('postmessage');
 
 module.exports = (function () {
@@ -27,48 +28,53 @@ module.exports = (function () {
             this.childWindow.location.href = url;
         }
 
-        this.on('close', _.bind(function (event) {
-            if (timer) {
-                global.clearTimeout(timer);
-            }
-            if (this.childWindow) {
-                this.childWindow.close();
-            }
-            $(event.target).off(event);
-        }, this));
+        var addHandlres = _.bind(function () {
+            this.on('close', _.bind(function (event) {
+                if (timer) {
+                    global.clearTimeout(timer);
+                }
+                if (this.childWindow) {
+                    this.childWindow.close();
+                }
+                $(event.target).off(event);
+            }, this));
 
-        // Cross-window communication
-        var message = new PostMessage(this.childWindow);
-        message.on('dimensions widget-detection', _.bind(function (event) {
-            this.triggerEvent('load');
-            $(event.target).off(event);
-        }, this));
-        message.on('widget-detection', function () {
-            message.send('widget-detected', {version: version});
-        });
-        message.on('status', _.bind(function (event, data) {
-            self.triggerEvent('status', data);
-        }, this));
-        this.on('close', function (event) {
-            if (message) {
-                message.off();
-            }
-            $(event.target).off(event);
-        });
-
-        this.triggerEvent('open');
+            // Cross-window communication
+            var message = new PostMessage(this.childWindow);
+            message.on('dimensions widget-detection', _.bind(function (event) {
+                this.triggerEvent('load');
+                $(event.target).off(event);
+            }, this));
+            message.on('widget-detection', function () {
+                message.send('widget-detected', {version: version});
+            });
+            message.on('status', _.bind(function (event, data) {
+                self.triggerEvent('status', data);
+            }, this));
+            this.on('close', function (event) {
+                if (message) {
+                    message.off();
+                }
+                $(event.target).off(event);
+            });
+        }, this);
 
         switch (options.target) {
             case '_self':
-                global.window.location.href = url;
+                this.childWindow = global.window;
+                addHandlres();
+                this.childWindow.location.href = url;
                 break;
             case '_parent':
-                global.window.parent.location.href = url;
+                this.childWindow = global.window.parent;
+                addHandlres();
+                this.childWindow.location.href = url;
                 break;
             case '_blank':
             default:
                 this.childWindow = global.window.open(url);
                 this.childWindow.focus();
+                addHandlres();
 
                 var checkWindow = _.bind(function () {
                     if (this.childWindow) {
@@ -82,6 +88,8 @@ module.exports = (function () {
                 var timer = global.setTimeout(checkWindow, 100);
                 break;
         }
+
+        this.triggerEvent('open');
     };
 
     ChildWindow.prototype.close = function () {

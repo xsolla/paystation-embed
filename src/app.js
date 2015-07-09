@@ -18,7 +18,7 @@ module.exports = (function () {
         access_token: null,
         sandbox: false,
         lightbox: {},
-        child_window: {}
+        childWindow: {}
     };
     var EVENT_NAMESPACE = '.xpaystation-widget';
     var ATTR_PREFIX = 'data-xpaystation-widget';
@@ -100,7 +100,7 @@ module.exports = (function () {
                 this.triggerEvent('status', statusData);
                 triggerSplitStatus(statusData);
             }, this));
-            childWindow.open(url, this.config.child_window);
+            childWindow.open(url, this.config.childWindow);
         } else {
             var lightBox = new LightBox;
             lightBox.on('open', _.bind(function () {

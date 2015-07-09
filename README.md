@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js](https://xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://xsolla.cachefly.net/embed/paystation/1.0.2/widget.min.js](https://xsolla.cachefly.net/embed/paystation/1.0.2/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
@@ -37,7 +37,7 @@ $ bower install xsolla-paystation-embed
     var s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js";
+    s.src = "//xsolla.cachefly.net/embed/paystation/1.0.2/widget.min.js";
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
@@ -49,7 +49,7 @@ $ bower install xsolla-paystation-embed
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//xsolla.cachefly.net/embed/paystation/1.0.1/widget.min.js"></script>
+<script src="//xsolla.cachefly.net/embed/paystation/1.0.2/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'
@@ -98,7 +98,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **contentMargin** — margin around frame, default '10px',
     * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round' or 'none', default is the first one
     * **spinnerColor** — Color of the spinner, not set by default
-* **child_window** — Options for child window that contains PayStation. Suitable for mobile version
+* **childWindow** — Options for child window that contains PayStation. Suitable for mobile version
     * **target** — The target option specifies where to open the Paystation window, can be '_blank', '_self', '_parent', default is '_blank'
 
 ### Widget API

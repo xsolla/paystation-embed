@@ -26,7 +26,8 @@ function setupBrowserify(watch) {
     bundler.require('./bower_components/jquery/dist/jquery.js', {expose: 'jquery'});
     bundler.require('./bower_components/lodash/lodash.js', {expose: 'lodash'});
     bundler.transform({
-        outputStyle: 'compressed'
+        outputStyle: 'compressed',
+        'auto-inject': true
     }, sassify);
 
     bundler.transform(stringify({

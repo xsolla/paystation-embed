@@ -13,12 +13,8 @@ module.exports = (function () {
     var CLASS_PREFIX = 'xpaystation-widget-lightbox';
     var EVENT_NAMESPACE = '.xpaystation-widget-lightbox';
     var DEFAULT_OPTIONS = {
-        width: '850px',
+        width: null,
         height: '100%',
-        autoSize: {
-            width: true,
-            height: false
-        },
         zIndex: 1000,
         overlayOpacity: '.6',
         overlayBackground: '#000000',
@@ -136,8 +132,8 @@ module.exports = (function () {
             lightBoxContentElement.css({
                 top: 0,
                 left: 0,
-                width: options.autoSize.width ? psDimensions.width : options.width,
-                height: options.autoSize.height ? psDimensions.height : options.height
+                width: options.width ? options.width : psDimensions.width,
+                height: options.height ? options.height : psDimensions.height
             });
 
             var containerWidth = lightBoxElement.get(0).clientWidth,
@@ -191,7 +187,7 @@ module.exports = (function () {
 
         var loadTimer;
         lightBoxIframeElement.on('load', _.bind(function (event) {
-            var timeout = options.autoSize.width || options.autoSize.height ? 30000 : 1000; //30000 if psDimensions will not arrive
+            var timeout = !options.width || !options.height ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {
                 showContent();
             }, timeout);
@@ -202,7 +198,7 @@ module.exports = (function () {
 
         // Cross-window communication
         var message = new PostMessage(iframeWindow);
-        if (!options.autoSize.width && !options.autoSize.height) {
+        if (options.width && options.height) {
             message.on('dimensions widget-detection', function () {
                 showContent();
             });
@@ -242,7 +238,7 @@ module.exports = (function () {
             $(event.target).off(event);
         });
 
-        if (!options.autoSize.width && !options.autoSize.height) {
+        if (options.width && options.height) {
             lightBoxResize();
         }
         showSpinner();

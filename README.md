@@ -85,9 +85,9 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **access_token** — Access token
 * **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead secure.xsolla.com
 * **lightbox** — Options for modal dialog that contains frame of PayStation
-    * **width** — Width of lightbox frame, default is '850px'
-    * **height** — Height of lightbox frame, default is '100%'
-    * **autoSize** - Auto size lightbox frame depending on Paystation size, default is true
+    * **width** — Width of lightbox frame, default is '850px'. Suitable for false value of autoSize.width option
+    * **height** — Height of lightbox frame, default is '100%'. Suitable for false value of autoSize.height option
+    * **autoSize** - Auto size width and height of lightbox frame depending on Paystation size, default {width: true, height: false}
     * **zIndex** — Property controls the vertical stacking order, default is 1000
     * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
     * **overlayBackground** — Background of the overlay, default is '#000000'

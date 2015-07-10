@@ -15,7 +15,10 @@ module.exports = (function () {
     var DEFAULT_OPTIONS = {
         width: '850px',
         height: '100%',
-        autoSize: true,
+        autoSize: {
+            width: true,
+            height: false
+        },
         zIndex: 1000,
         overlayOpacity: '.6',
         overlayBackground: '#000000',
@@ -133,8 +136,8 @@ module.exports = (function () {
             lightBoxContentElement.css({
                 top: 0,
                 left: 0,
-                width: options.autoSize ? psDimensions.width : options.width,
-                height: options.autoSize ? psDimensions.height : options.height
+                width: options.autoSize.width ? psDimensions.width : options.width,
+                height: options.autoSize.height ? psDimensions.height : options.height
             });
 
             var containerWidth = lightBoxElement.get(0).clientWidth,
@@ -188,7 +191,7 @@ module.exports = (function () {
 
         var loadTimer;
         lightBoxIframeElement.on('load', _.bind(function (event) {
-            var timeout = options.autoSize ? 30000 : 1000; //30000 if psDimensions will not arrive
+            var timeout = options.autoSize.width || options.autoSize.height ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {
                 showContent();
             }, timeout);
@@ -199,7 +202,7 @@ module.exports = (function () {
 
         // Cross-window communication
         var message = new PostMessage(iframeWindow);
-        if (!options.autoSize) {
+        if (!options.autoSize.width && !options.autoSize.height) {
             message.on('dimensions widget-detection', function () {
                 showContent();
             });
@@ -239,7 +242,7 @@ module.exports = (function () {
             $(event.target).off(event);
         });
 
-        if (!options.autoSize) {
+        if (!options.autoSize.width && !options.autoSize.height) {
             lightBoxResize();
         }
         showSpinner();

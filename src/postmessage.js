@@ -40,7 +40,7 @@ module.exports = (function () {
         }
 
         if (_.isUndefined(transfer)) {
-            transfer = undefined;
+            transfer = null;
         }
 
         if (!this.linkedWindow || _.isUndefined(this.linkedWindow.postMessage) || _.isUndefined(global.window.JSON)) {

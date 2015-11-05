@@ -11,3 +11,9 @@
 - [feature] Modal option for lightbox added
 - [feature] 'none' value for option 'spinner' for lightbox added
 - [feature] Target option for child window added
+
+## 1.0.3 - 2015-11-05
+
+- [fix] Close button displaying in IE10
+- [fix] Status page opens in lightbox in IE10
+- [fix] Blank page while loading

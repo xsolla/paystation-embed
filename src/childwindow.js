@@ -28,7 +28,7 @@ module.exports = (function () {
             this.childWindow.location.href = url;
         }
 
-        var addHandlres = _.bind(function () {
+        var addHandlers = _.bind(function () {
             this.on('close', _.bind(function (event) {
                 if (timer) {
                     global.clearTimeout(timer);
@@ -62,19 +62,19 @@ module.exports = (function () {
         switch (options.target) {
             case '_self':
                 this.childWindow = global.window;
-                addHandlres();
+                addHandlers();
                 this.childWindow.location.href = url;
                 break;
             case '_parent':
                 this.childWindow = global.window.parent;
-                addHandlres();
+                addHandlers();
                 this.childWindow.location.href = url;
                 break;
             case '_blank':
             default:
                 this.childWindow = global.window.open(url);
                 this.childWindow.focus();
-                addHandlres();
+                addHandlers();
 
                 var checkWindow = _.bind(function () {
                     if (this.childWindow) {

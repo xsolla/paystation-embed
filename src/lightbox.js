@@ -199,7 +199,7 @@ module.exports = (function () {
         // Cross-window communication
         var message = new PostMessage(iframeWindow);
         if (options.width && options.height) {
-            message.on('dimensions widget-detection', function () {
+            message.on('dimensions', function () {
                 showContent();
             });
         }

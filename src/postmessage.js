@@ -30,7 +30,7 @@ module.exports = (function () {
     PostMessage.prototype.linkedWindow = null;
 
     /** Public Members **/
-    PostMessage.prototype.send = function(command, data, targetOrigin, transfer) {
+    PostMessage.prototype.send = function(command, data, targetOrigin) {
         if (_.isUndefined(data)) {
             data = {};
         }
@@ -39,16 +39,12 @@ module.exports = (function () {
             targetOrigin = '*';
         }
 
-        if (_.isUndefined(transfer)) {
-            transfer = null;
-        }
-
         if (!this.linkedWindow || _.isUndefined(this.linkedWindow.postMessage) || _.isUndefined(global.window.JSON)) {
             return false;
         }
 
         try {
-            this.linkedWindow.postMessage(global.JSON.stringify({data: data, command: command}), targetOrigin, transfer);
+            this.linkedWindow.postMessage(global.JSON.stringify({data: data, command: command}), targetOrigin);
         } catch (e) {
         }
 

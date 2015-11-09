@@ -41,6 +41,11 @@ module.exports = (function () {
         none: ' '
     };
 
+    var MIN_PS_DIMENSIONS = {
+        height: 500,
+        width: 600
+    };
+
     /** Private Members **/
     LightBox.prototype.triggerEvent = function () {
         this.eventObject.trigger.apply(this.eventObject, arguments);
@@ -202,21 +207,20 @@ module.exports = (function () {
             message.on('dimensions', function () {
                 showContent();
             });
-        }
-        else {
+        } else {
             message.on('dimensions', function (event, data) {
                 if (data.dimensions) {
-                    psDimensions = {
-                        width: data.dimensions.width + 'px',
-                        height: data.dimensions.height + 'px'
-                    };
+                    psDimensions = _.object(_.map(['width', 'height'], function (dim) {
+                        return [dim, Math.max(MIN_PS_DIMENSIONS[dim] || 0, data.dimensions[dim] || 0) + 'px'];
+                    }));
+
                     lightBoxResize();
                 }
                 showContent();
             });
         }
         message.on('widget-detection', function () {
-            message.send('widget-detected', {version: version, modal: options.modal});
+            message.send('widget-detected', {version: version, lightBoxOptions: options});
         });
         message.on('widget-close', _.bind(function () {
             this.closeFrame();

@@ -46,7 +46,7 @@ module.exports = (function () {
                 $(event.target).off(event);
             }, this));
             message.on('widget-detection', function () {
-                message.send('widget-detected', {version: version});
+                message.send('widget-detected', {version: version, childWindowOptions: options});
             });
             message.on('status', _.bind(function (event, data) {
                 self.triggerEvent('status', data);

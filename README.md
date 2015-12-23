@@ -22,7 +22,7 @@ Script is located on our CDN and is available here: [https://static.xsolla.com/
 If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
 
 ``` bash
-$ bower install xsolla-paystation-embed
+$ bower install xsolla-paystation-widget
 ```
 
 ### Script Loading

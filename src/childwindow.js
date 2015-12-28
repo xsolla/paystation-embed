@@ -6,6 +6,7 @@ var PostMessage = require('postmessage');
 module.exports = (function () {
     function ChildWindow() {
         this.eventObject = $({});
+        this.message = null;
     }
 
     var DEFAULT_OPTIONS = {
@@ -40,23 +41,21 @@ module.exports = (function () {
             }, this));
 
             // Cross-window communication
-            var message = new PostMessage(this.childWindow);
-            message.on('dimensions widget-detection', _.bind(function (event) {
+            this.message = new PostMessage(this.childWindow);
+            this.message.on('dimensions widget-detection', _.bind(function (event) {
                 this.triggerEvent('load');
                 $(event.target).off(event);
             }, this));
-            message.on('widget-detection', function () {
-                message.send('widget-detected', {version: version, childWindowOptions: options});
-            });
-            message.on('status', _.bind(function (event, data) {
-                self.triggerEvent('status', data);
+            this.message.on('widget-detection', _.bind(function () {
+                this.message.send('widget-detected', {version: version, childWindowOptions: options});
             }, this));
-            this.on('close', function (event) {
-                if (message) {
-                    message.off();
-                }
+            this.message.on('status', _.bind(function (event, data) {
+                this.triggerEvent('status', data);
+            }, this));
+            this.on('close', _.bind(function (event) {
+                this.message.off();
                 $(event.target).off(event);
-            });
+            }, this));
         }, this);
 
         switch (options.target) {
@@ -102,6 +101,10 @@ module.exports = (function () {
 
     ChildWindow.prototype.off = function () {
         this.eventObject.off.apply(this.eventObject, arguments);
+    };
+
+    ChildWindow.prototype.getPostMessage = function () {
+        return this.message;
     };
 
     return ChildWindow;

@@ -16,3 +16,7 @@
 
 - [fix] Close button displaying in IE10
 - [fix] Blank page while loading
+
+## pre 1.0.4 - 2015-12-25
+
+- [feature] New methods for communication with PayStation using PostMessage interface

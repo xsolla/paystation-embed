@@ -8,6 +8,7 @@ module.exports = (function () {
         require('styles/lightbox.scss');
         this.eventObject = $({});
         this.options = DEFAULT_OPTIONS;
+        this.message = null;
     }
 
     var CLASS_PREFIX = 'xpaystation-widget-lightbox';
@@ -202,13 +203,13 @@ module.exports = (function () {
         var iframeWindow = lightBoxIframeElement.get(0).contentWindow || lightBoxIframeElement.get(0);
 
         // Cross-window communication
-        var message = new PostMessage(iframeWindow);
+        this.message = new PostMessage(iframeWindow);
         if (options.width && options.height) {
-            message.on('dimensions', function () {
+            this.message.on('dimensions', function () {
                 showContent();
             });
         } else {
-            message.on('dimensions', function (event, data) {
+            this.message.on('dimensions', function (event, data) {
                 if (data.dimensions) {
                     psDimensions = _.object(_.map(['width', 'height'], function (dim) {
                         return [dim, Math.max(MIN_PS_DIMENSIONS[dim] || 0, data.dimensions[dim] || 0) + 'px'];
@@ -219,13 +220,13 @@ module.exports = (function () {
                 showContent();
             });
         }
-        message.on('widget-detection', function () {
-            message.send('widget-detected', {version: version, lightBoxOptions: options});
-        });
-        message.on('widget-close', _.bind(function () {
+        this.message.on('widget-detection', _.bind(function () {
+            this.message.send('widget-detected', {version: version, lightBoxOptions: options});
+        }, this));
+        this.message.on('widget-close', _.bind(function () {
             this.closeFrame();
         }, this));
-        message.on('status', _.bind(function (event, data) {
+        this.message.on('status', _.bind(function (event, data) {
             this.triggerEvent('status', data);
         }, this));
 
@@ -233,14 +234,14 @@ module.exports = (function () {
         $.event.add(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
 
         // Clean up after close
-        this.on('close', function (event) {
-            message.off();
+        this.on('close', _.bind(function (event) {
+            this.message.off();
             bodyElement.off(EVENT_NAMESPACE);
             $.event.remove(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
             lightBoxElement.remove();
             resetScrollbar();
             $(event.target).off(event);
-        });
+        }, this));
 
         if (options.width && options.height) {
             lightBoxResize();
@@ -263,6 +264,10 @@ module.exports = (function () {
 
     LightBox.prototype.off = function () {
         this.eventObject.off.apply(this.eventObject, arguments);
+    };
+
+    LightBox.prototype.getPostMessage = function () {
+        return this.message;
     };
 
     return LightBox;

@@ -12,7 +12,7 @@ module.exports = (function () {
         return instance;
     };
 
-    return _.extend(_.object(_.map(['init', 'open', 'on', 'off'], function (methodName) {
+    return _.extend(_.object(_.map(['init', 'open', 'on', 'off', 'sendMessage', 'onMessage'], function (methodName) {
         var app = getInstance();
         return [methodName, function () {
             return app[methodName].apply(app, arguments);

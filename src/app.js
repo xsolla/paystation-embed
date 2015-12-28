@@ -10,6 +10,7 @@ module.exports = (function () {
         this.config = _.extend({}, DEFAULT_CONFIG);
         this.eventObject = $({});
         this.isInitiated = false;
+        this.postMessage = null;
     }
 
     var PAYSTATION_URL = 'https://secure.xsolla.com/paystation2/?';
@@ -83,9 +84,11 @@ module.exports = (function () {
             access_token: this.config.access_token
         });
 
+        this.postMessage = null;
         if (device.isMobile()) {
             var childWindow = new ChildWindow;
             childWindow.on('open', _.bind(function () {
+                this.postMessage = childWindow.getPostMessage();
                 this.triggerEvent('open');
                 this.triggerEvent('open-window');
             }, this));
@@ -104,6 +107,7 @@ module.exports = (function () {
         } else {
             var lightBox = new LightBox;
             lightBox.on('open', _.bind(function () {
+                this.postMessage = lightBox.getPostMessage();
                 this.triggerEvent('open');
                 this.triggerEvent('open-lightbox');
             }, this));
@@ -142,6 +146,28 @@ module.exports = (function () {
      */
     App.prototype.off = function (event, handler) {
         this.eventObject.off(event, handler);
+    };
+
+    /**
+     * Send a message directly to PayStation
+     * @param command
+     * @param data
+     */
+    App.prototype.sendMessage = function (command, data) {
+        if (this.postMessage) {
+            this.postMessage.send.apply(this.postMessage, arguments);
+        }
+    };
+
+    /**
+     * Attach an event handler function for message event from PayStation
+     * @param command
+     * @param handler
+     */
+    App.prototype.onMessage = function (command, handler) {
+        if (this.postMessage) {
+            this.postMessage.on.apply(this.postMessage, arguments);
+        }
     };
 
     return App;

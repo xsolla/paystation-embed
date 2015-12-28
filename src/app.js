@@ -13,6 +13,22 @@ module.exports = (function () {
         this.postMessage = null;
     }
 
+    App.eventTypes = {
+        INIT: 'init',
+        OPEN: 'open',
+        OPEN_WINDOW: 'open-window',
+        OPEN_LIGHTBOX: 'open-lightbox',
+        LOAD: 'load',
+        CLOSE: 'close',
+        CLOSE_WINDOW: 'close-window',
+        CLOSE_LIGHTBOX: 'close-lightbox',
+        STATUS: 'status',
+        STATUS_INVOICE: 'status-invoice',
+        STATUS_DELIVERING: 'status-delivering',
+        STATUS_TROUBLED: 'status-troubled',
+        STATUS_DONE: 'status-done'
+    };
+
     var PAYSTATION_URL = 'https://secure.xsolla.com/paystation2/?';
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var DEFAULT_CONFIG = {
@@ -63,7 +79,7 @@ module.exports = (function () {
             this.open();
         }, this));
 
-        this.triggerEvent('init');
+        this.triggerEvent(App.eventTypes.INIT);
     };
 
     /**
@@ -74,8 +90,11 @@ module.exports = (function () {
         this.checkApp();
 
         var triggerSplitStatus = _.bind(function (data) {
-            if (data && data.paymentInfo && data.paymentInfo.status) {
-                this.triggerEvent('status-' + data.paymentInfo.status, data);
+            switch (((data || {}).paymentInfo || {}).status) {
+                case 'invoice': this.triggerEvent(App.eventTypes.STATUS_INVOICE, data); break;
+                case 'delivering': this.triggerEvent(App.eventTypes.STATUS_DELIVERING, data); break;
+                case 'troubled': this.triggerEvent(App.eventTypes.STATUS_TROUBLED, data); break;
+                case 'done': this.triggerEvent(App.eventTypes.STATUS_DONE, data); break;
             }
         }, this);
 
@@ -89,18 +108,18 @@ module.exports = (function () {
             var childWindow = new ChildWindow;
             childWindow.on('open', _.bind(function () {
                 this.postMessage = childWindow.getPostMessage();
-                this.triggerEvent('open');
-                this.triggerEvent('open-window');
+                this.triggerEvent(App.eventTypes.OPEN);
+                this.triggerEvent(App.eventTypes.OPEN_WINDOW);
             }, this));
             childWindow.on('load', _.bind(function () {
-                this.triggerEvent('load');
+                this.triggerEvent(App.eventTypes.LOAD);
             }, this));
             childWindow.on('close', _.bind(function () {
-                this.triggerEvent('close');
-                this.triggerEvent('close-window');
+                this.triggerEvent(App.eventTypes.CLOSE);
+                this.triggerEvent(App.eventTypes.CLOSE_WINDOW);
             }, this));
             childWindow.on('status', _.bind(function (event, statusData) {
-                this.triggerEvent('status', statusData);
+                this.triggerEvent(App.eventTypes.STATUS, statusData);
                 triggerSplitStatus(statusData);
             }, this));
             childWindow.open(url, this.config.childWindow);
@@ -108,18 +127,18 @@ module.exports = (function () {
             var lightBox = new LightBox;
             lightBox.on('open', _.bind(function () {
                 this.postMessage = lightBox.getPostMessage();
-                this.triggerEvent('open');
-                this.triggerEvent('open-lightbox');
+                this.triggerEvent(App.eventTypes.OPEN);
+                this.triggerEvent(App.eventTypes.OPEN_LIGHTBOX);
             }, this));
             lightBox.on('load', _.bind(function () {
-                this.triggerEvent('load');
+                this.triggerEvent(App.eventTypes.LOAD);
             }, this));
             lightBox.on('close', _.bind(function () {
-                this.triggerEvent('close');
-                this.triggerEvent('close-lightbox');
+                this.triggerEvent(App.eventTypes.CLOSE);
+                this.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
             }, this));
             lightBox.on('status', _.bind(function (event, statusData) {
-                this.triggerEvent('status', statusData);
+                this.triggerEvent(App.eventTypes.STATUS, statusData);
                 triggerSplitStatus(statusData);
             }, this));
             lightBox.openFrame(url, this.config.lightbox);

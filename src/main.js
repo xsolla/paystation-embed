@@ -17,5 +17,8 @@ module.exports = (function () {
         return [methodName, function () {
             return app[methodName].apply(app, arguments);
         }];
-    })), {$: $});
+    })), {
+        eventTypes: App.eventTypes,
+        $: $
+    });
 })();

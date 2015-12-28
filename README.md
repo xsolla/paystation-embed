@@ -127,10 +127,12 @@ You can refer to the widget object, using the following methods:
 * **status-done** — Event when the user was moved on the status page, and the payment was completed successfully
 * **status-troubled** — Event when the user was moved on the status page, but the payment failed
 
+You can access list of event using XPayStationWidget.eventTypes object.
+
 ##### Example
 
 ``` javascript
-XPayStationWidget.on('status', function (event, data) {
+XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function (event, data) {
     console.log(data.paymentInfo); // {
                                    //   email: "main@example.com",
                                    //   invoice: 140381877,

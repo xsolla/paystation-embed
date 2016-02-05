@@ -1,9 +1,9 @@
 var $ = require('jquery');
 var _ = require('lodash');
-var Exception = require('exception');
-var LightBox = require('lightbox');
-var ChildWindow = require('childwindow');
-var Device = require('device');
+var Exception = require('./exception');
+var LightBox = require('./lightbox');
+var ChildWindow = require('./childwindow');
+var Device = require('./device');
 
 module.exports = (function () {
     function App() {

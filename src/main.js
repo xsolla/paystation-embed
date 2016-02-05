@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var $ = require('jquery');
-var App = require('app');
+var App = require('./app');
 
 var instance;
 

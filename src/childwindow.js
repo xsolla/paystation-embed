@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var _ = require('lodash');
-var version = require('version');
-var PostMessage = require('postmessage');
+var version = require('./version');
+var PostMessage = require('./postmessage');
 
 module.exports = (function () {
     function ChildWindow() {

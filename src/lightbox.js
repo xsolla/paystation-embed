@@ -1,11 +1,11 @@
 var $ = require('jquery');
 var _ = require('lodash');
-var version = require('version');
-var PostMessage = require('postmessage');
+var version = require('./version');
+var PostMessage = require('./postmessage');
 
 module.exports = (function () {
     function LightBox() {
-        require('styles/lightbox.scss');
+        require('./styles/lightbox.scss');
         this.eventObject = $({});
         this.options = DEFAULT_OPTIONS;
         this.message = null;
@@ -37,8 +37,8 @@ module.exports = (function () {
     '</div>';
 
     var SPINNERS = {
-        xsolla: require('spinners/xsolla.svg'),
-        round: require('spinners/round.svg'),
+        xsolla: require('./spinners/xsolla.svg'),
+        round: require('./spinners/round.svg'),
         none: ' '
     };
 

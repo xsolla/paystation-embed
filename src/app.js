@@ -33,6 +33,7 @@ module.exports = (function () {
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var DEFAULT_CONFIG = {
         access_token: null,
+        access_data: null,
         sandbox: false,
         lightbox: {},
         childWindow: {}
@@ -46,8 +47,12 @@ module.exports = (function () {
     App.prototype.eventObject = $({});
 
     App.prototype.checkConfig = function () {
-        if (_.isEmpty(this.config.access_token)) {
+        if (_.isEmpty(this.config.access_token) && _.isEmpty(this.config.access_data)) {
             this.throwError('No access token given');
+        }
+
+        if (!_.isEmpty(this.config.access_data) && !_.isPlainObject(this.config.access_data)) {
+            this.throwError('Invalid access data format');
         }
     };
 
@@ -98,13 +103,17 @@ module.exports = (function () {
             }
         }, this);
 
-        var device = new Device;
-        var url = (this.config.sandbox ? SANDBOX_PAYSTATION_URL : PAYSTATION_URL) + $.param({
-            access_token: this.config.access_token
-        });
+        var query = {};
+        if (this.config.access_token) {
+            query.access_token = this.config.access_token;
+        } else {
+            query.access_data = JSON.stringify(this.config.access_data);
+        }
+
+        var url = (this.config.sandbox ? SANDBOX_PAYSTATION_URL : PAYSTATION_URL) + $.param(query);
 
         this.postMessage = null;
-        if (device.isMobile()) {
+        if ((new Device).isMobile()) {
             var childWindow = new ChildWindow;
             childWindow.on('open', _.bind(function () {
                 this.postMessage = childWindow.getPostMessage();

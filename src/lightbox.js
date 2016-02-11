@@ -31,7 +31,7 @@ module.exports = (function () {
     var TEMPLATE = '<div class="<%-prefix%>">' +
         '<div class="<%-prefix%>-overlay"></div>' +
         '<div class="<%-prefix%>-content <%-prefix%>-content__hidden">' +
-            '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0"></iframe>' +
+            '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0" allowfullscreen></iframe>' +
         '</div>' +
         '<div class="<%-prefix%>-spinner"><%=spinner%></div>' +
     '</div>';

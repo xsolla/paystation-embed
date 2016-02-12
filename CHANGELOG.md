@@ -17,7 +17,9 @@
 - [fix] Close button displaying in IE10
 - [fix] Blank page while loading
 
-## pre 1.0.4 - 2015-12-25
+## 1.0.4 - 2016-02-12
 
 - [feature] New methods for communication with PayStation using PostMessage interface
 - [feature] List of event type
+- [feature] Serverless integration
+- [feature] allowfullscreen attribute

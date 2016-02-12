@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.3/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.3/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.4/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.4/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
@@ -37,7 +37,7 @@ $ bower install xsolla-paystation-widget
     var s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//static.xsolla.com/embed/paystation/1.0.3/widget.min.js";
+    s.src = "//static.xsolla.com/embed/paystation/1.0.4/widget.min.js";
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
@@ -49,7 +49,7 @@ $ bower install xsolla-paystation-widget
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//static.xsolla.com/embed/paystation/1.0.3/widget.min.js"></script>
+<script src="//static.xsolla.com/embed/paystation/1.0.4/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'

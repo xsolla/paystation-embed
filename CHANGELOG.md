@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5 - 2016-06-24
+
+- [fix] Improved mobile detection
+
 ## 1.0.4 - 2016-02-18
 
 - [feature] New methods for communication with PayStation using PostMessage interface

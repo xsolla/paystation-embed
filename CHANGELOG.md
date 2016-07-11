@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 - 2016-07-11
+
+- [feature] Added **host** parameter for custom PayStation hosts
+
 ## 1.0.5 - 2016-06-24
 
 - [fix] Improved mobile detection

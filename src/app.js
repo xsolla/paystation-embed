@@ -29,14 +29,13 @@ module.exports = (function () {
         STATUS_DONE: 'status-done'
     };
 
-    var PAYSTATION_URL = 'https://secure.xsolla.com/paystation2/?';
-    var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var DEFAULT_CONFIG = {
         access_token: null,
         access_data: null,
         sandbox: false,
         lightbox: {},
-        childWindow: {}
+        childWindow: {},
+        host: 'secure.xsolla.com'
     };
     var EVENT_NAMESPACE = '.xpaystation-widget';
     var ATTR_PREFIX = 'data-xpaystation-widget';
@@ -46,6 +45,11 @@ module.exports = (function () {
     App.prototype.isInitiated = false;
     App.prototype.eventObject = $({});
 
+    App.prototype.getPaystationUrl = function () {
+        var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
+        return this.config.sandbox ? SANDBOX_PAYSTATION_URL : 'https://' + this.config.host + '/paystation2/?';
+    };
+
     App.prototype.checkConfig = function () {
         if (_.isEmpty(this.config.access_token) && _.isEmpty(this.config.access_data)) {
             this.throwError('No access token given');
@@ -53,6 +57,10 @@ module.exports = (function () {
 
         if (!_.isEmpty(this.config.access_data) && !_.isPlainObject(this.config.access_data)) {
             this.throwError('Invalid access data format');
+        }
+
+        if (_.isEmpty(this.config.host)) {
+            this.throwError('Invalid host');
         }
     };
 
@@ -96,10 +104,18 @@ module.exports = (function () {
 
         var triggerSplitStatus = _.bind(function (data) {
             switch (((data || {}).paymentInfo || {}).status) {
-                case 'invoice': this.triggerEvent(App.eventTypes.STATUS_INVOICE, data); break;
-                case 'delivering': this.triggerEvent(App.eventTypes.STATUS_DELIVERING, data); break;
-                case 'troubled': this.triggerEvent(App.eventTypes.STATUS_TROUBLED, data); break;
-                case 'done': this.triggerEvent(App.eventTypes.STATUS_DONE, data); break;
+                case 'invoice':
+                    this.triggerEvent(App.eventTypes.STATUS_INVOICE, data);
+                    break;
+                case 'delivering':
+                    this.triggerEvent(App.eventTypes.STATUS_DELIVERING, data);
+                    break;
+                case 'troubled':
+                    this.triggerEvent(App.eventTypes.STATUS_TROUBLED, data);
+                    break;
+                case 'done':
+                    this.triggerEvent(App.eventTypes.STATUS_DONE, data);
+                    break;
             }
         }, this);
 
@@ -110,7 +126,7 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
-        var url = (this.config.sandbox ? SANDBOX_PAYSTATION_URL : PAYSTATION_URL) + $.param(query);
+        var url = this.getPaystationUrl() + $.param(query);
 
         this.postMessage = null;
         if ((new Device).isMobile()) {

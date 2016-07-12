@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.4/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.4/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.6/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.6/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
@@ -37,7 +37,7 @@ $ bower install xsolla-paystation-widget
     var s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//static.xsolla.com/embed/paystation/1.0.4/widget.min.js";
+    s.src = "//static.xsolla.com/embed/paystation/1.0.6/widget.min.js";
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
@@ -49,7 +49,7 @@ $ bower install xsolla-paystation-widget
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//static.xsolla.com/embed/paystation/1.0.4/widget.min.js"></script>
+<script src="//static.xsolla.com/embed/paystation/1.0.6/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'
@@ -83,7 +83,8 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 ### Widget Options
 
 * **access_token** — Access token
-* **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead secure.xsolla.com
+* **host** - Host for performing requests. The default value is **secure.xsolla.com**
+* **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead of **host**
 * **lightbox** — Options for modal dialog that contains frame of PayStation
     * **width** — Width of lightbox frame. If null, depends on paystation width. Default is null
     * **height** — Height of lightbox frame. If null, depends on paystation height. Default is '100%'

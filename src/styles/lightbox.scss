@@ -98,6 +98,11 @@ $lightbox-class: '.' + $lightbox-prefix;
     -webkit-animation: #{$lightbox-prefix}-spin 3s infinite linear;
     animation: #{$lightbox-prefix}-spin 3s infinite linear;
   }
+
+  .spinner-custom {
+    -webkit-animation: #{$lightbox-prefix}-spin infinite linear;
+    animation: #{$lightbox-prefix}-spin infinite linear;
+  }
 }
 
 @-webkit-keyframes #{$lightbox-prefix}-bouncedelay {

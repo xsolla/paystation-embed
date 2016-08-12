@@ -96,8 +96,10 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
     * **contentBackground** — Background of the frame, default is '#ffffff'
     * **contentMargin** — margin around frame, default '10px',
-    * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round' or 'none', default is the first one
+    * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round', 'none' or 'custom', default is the first one
     * **spinnerColor** — Color of the spinner, not set by default
+    * **spinnerUrl** — URL of custom spinner, default is null
+    * **spinnerRotationSpeed** — Rotation speed of custom spinner, default 0
 * **childWindow** — Options for child window that contains PayStation. Suitable for mobile version
     * **target** — The target option specifies where to open the Paystation window, can be '_blank', '_self', '_parent', default is '_blank'
 

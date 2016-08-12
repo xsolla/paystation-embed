@@ -25,7 +25,9 @@ module.exports = (function () {
         closeByClick: true,
         modal: false,
         spinner: 'xsolla',
-        spinnerColor: null
+        spinnerColor: null,
+        spinnerUrl: null,
+        spinnerRotationSpeed: 0
     };
 
     var TEMPLATE = '<div class="<%-prefix%>">' +
@@ -75,11 +77,14 @@ module.exports = (function () {
         this.options = _.extend({}, this.options, options);
         options = this.options;
 
+        var spinner = options.spinner === 'custom' && !!options.spinnerUrl ?
+            '<img class="spinner-custom" src="' + encodeURI(options.spinnerUrl) + '" />' : SPINNERS[options.spinner] || _.values(SPINNERS)[0];
+
         var bodyElement = $(global.document.body);
         var lightBoxElement = $(_.template(TEMPLATE)({
             prefix: CLASS_PREFIX,
             url: url,
-            spinner: options && SPINNERS[options.spinner] || _.values(SPINNERS)[0]
+            spinner: spinner
         }));
         var lightBoxOverlayElement = lightBoxElement.find('.' + CLASS_PREFIX + '-overlay');
         var lightBoxContentElement = lightBoxElement.find('.' + CLASS_PREFIX + '-content');
@@ -108,6 +113,13 @@ module.exports = (function () {
         if (options.spinnerColor) {
             lightBoxSpinnerElement.find('path').css({
                 fill: options.spinnerColor
+            });
+        }
+
+        if (options.spinner === 'custom') {
+            lightBoxSpinnerElement.find('.spinner-custom').css({
+                '-webkit-animation-duration': options.spinnerRotationSpeed + 's',
+                'animation-duration': options.spinnerRotationSpeed + 's'
             });
         }
 

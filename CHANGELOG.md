@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7 - 2016-08-12
+
+- [feature] Custom spinner
+
 ## 1.0.6 - 2016-07-11
 
 - [feature] Added **host** parameter for custom PayStation hosts

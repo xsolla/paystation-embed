@@ -438,7 +438,7 @@ module.exports = (function () {
         spinner: 'xsolla',
         spinnerColor: null,
         spinnerUrl: null,
-        spinnerRotationSpeed: 0
+        spinnerRotationPeriod: 0
     };
 
     var TEMPLATE = '<div class="<%-prefix%>">' +
@@ -529,8 +529,8 @@ module.exports = (function () {
 
         if (options.spinner === 'custom') {
             lightBoxSpinnerElement.find('.spinner-custom').css({
-                '-webkit-animation-duration': options.spinnerRotationSpeed + 's',
-                'animation-duration': options.spinnerRotationSpeed + 's'
+                '-webkit-animation-duration': options.spinnerRotationPeriod + 's',
+                'animation-duration': options.spinnerRotationPeriod + 's'
             });
         }
 

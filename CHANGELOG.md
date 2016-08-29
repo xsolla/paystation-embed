@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.7 - 2016-08-12
+## 1.0.7 - 2016-08-29
 
 - [feature] Custom spinner
 

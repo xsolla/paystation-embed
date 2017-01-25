@@ -126,11 +126,11 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
-        var url = this.getPaystationUrl() + $.param(query);
-
         if (this.config.utm) {
-            url += '&' + $.param(this.config.utm);
+            query = _.merge(query, this.config.utm);
         }
+
+        var url = this.getPaystationUrl() + $.param(query);
 
         this.postMessage = null;
         if ((new Device).isMobile()) {

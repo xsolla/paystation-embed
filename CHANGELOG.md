@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8 - 2017-01-25
+
+- [feature] Added UTM parameters 
+
 ## 1.0.7 - 2016-08-29
 
 - [feature] Custom spinner

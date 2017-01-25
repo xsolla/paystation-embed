@@ -126,6 +126,10 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
+        if (this.config.utm) {
+            query = _.merge(query, this.config.utm);
+        }
+
         var url = this.getPaystationUrl() + $.param(query);
 
         this.postMessage = null;

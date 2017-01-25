@@ -128,6 +128,10 @@ module.exports = (function () {
 
         var url = this.getPaystationUrl() + $.param(query);
 
+        if (this.config.utm) {
+            url += '&' + $.param(this.config.utm);
+        }
+
         this.postMessage = null;
         if ((new Device).isMobile()) {
             var childWindow = new ChildWindow;

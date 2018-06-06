@@ -2,7 +2,7 @@
 
 ## Integration Guide
 
-Xsolla team created a script to simplify the integration of PayStation into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/v2/pay-station/#api_tokenization).
+Xsolla team created a script to simplify the integration of PayStation into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/v2/pay-station/#api_payment_ui).
 
 [See Demo](http://livedemo.xsolla.com/paystation/)
 

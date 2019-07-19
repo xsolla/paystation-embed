@@ -85,8 +85,8 @@ module.exports = (function () {
             var iframe = document.createElement('iframe');
             iframe.className = settings.prefix + '-content-iframe';
             iframe.src = settings.url;
-            iframe.frameborder = '0';
-            iframe.allowfullscreen = true;
+            iframe.frameBorder = '0';
+            iframe.allowFullscreen = true;
 
             var spinner = document.createElement('div');
             spinner.className = settings.prefix + '-spinner';

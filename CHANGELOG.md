@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8 - 2019-07-18
+
+- [fix] remove lodash template dependency
+
 ## 1.0.7 - 2016-08-29
 
 - [feature] Custom spinner

@@ -30,14 +30,6 @@ module.exports = (function () {
         spinnerRotationPeriod: 0
     };
 
-    var TEMPLATE = '<div class="<%-prefix%>">' +
-        '<div class="<%-prefix%>-overlay"></div>' +
-        '<div class="<%-prefix%>-content <%-prefix%>-content__hidden">' +
-            '<iframe class="<%-prefix%>-content-iframe" src="<%-url%>" frameborder="0" allowfullscreen></iframe>' +
-        '</div>' +
-        '<div class="<%-prefix%>-spinner"><%=spinner%></div>' +
-    '</div>';
-
     var SPINNERS = {
         xsolla: require('./spinners/xsolla.svg'),
         round: require('./spinners/round.svg'),
@@ -80,8 +72,37 @@ module.exports = (function () {
         var spinner = options.spinner === 'custom' && !!options.spinnerUrl ?
             '<img class="spinner-custom" src="' + encodeURI(options.spinnerUrl) + '" />' : SPINNERS[options.spinner] || _.values(SPINNERS)[0];
 
+        var template = function (settings) {
+            var host = document.createElement('div');
+            host.className = settings.prefix;
+
+            var overlay = document.createElement('div');
+            overlay.className = settings.prefix + '-overlay';
+
+            var content = document.createElement('div');
+            content.className = settings.prefix + '-content' + ' ' + settings.prefix + '-content__hidden';
+
+            var iframe = document.createElement('iframe');
+            iframe.className = settings.prefix + '-content-iframe';
+            iframe.src = settings.url;
+            iframe.frameBorder = '0';
+            iframe.allowFullscreen = true;
+
+            var spinner = document.createElement('div');
+            spinner.className = settings.prefix + '-spinner';
+            spinner.innerHTML = settings.spinner;
+
+            content.appendChild(iframe);
+
+            host.appendChild(overlay);
+            host.appendChild(content);
+            host.appendChild(spinner);
+
+            return host;
+        };
+
         var bodyElement = $(global.document.body);
-        var lightBoxElement = $(_.template(TEMPLATE)({
+        var lightBoxElement = $(template({
             prefix: CLASS_PREFIX,
             url: url,
             spinner: spinner

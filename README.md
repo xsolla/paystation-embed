@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.8/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.7/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://static.xsolla.com/embed/paystation/1.0.8/widget.min.js](https://static.xsolla.com/embed/paystation/1.0.8/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 

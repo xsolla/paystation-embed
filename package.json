@@ -4,7 +4,7 @@
   "description": "PayStation 3 Integration Widget",
   "dependencies": {},
   "devDependencies": {
-    "bower": "1.4.1",
+    "bower": "1.8.8",
     "browser-sync": "2.7.13",
     "browserify": "10.2.4",
     "gulp": "3.9.0",

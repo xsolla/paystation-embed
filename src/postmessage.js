@@ -1,18 +1,32 @@
-var $ = require('jquery');
-var _ = require('lodash');
-
 module.exports = (function () {
     function PostMessage(window) {
-        this.eventObject = $({});
+        this.eventObject = {
+            trigger: (function(event, data) {
+                try {
+                    var event = new CustomEvent(event, {detail: data}); // Not working in IE
+                } catch(e) {
+                    var event = document.createEvent('CustomEvent');
+                    event.initCustomEvent(event, true, true, data);
+                }
+                document.dispatchEvent(event);
+            }).bind(this),
+            on: (function(event, handle, options) {
+                document.addEventListener(event, handle, options);
+            }).bind(this),
+            off: (function(event, handle, options) {
+                document.removeEventListener(event, handle, options);
+            }).bind(this)
+        };
+
         this.linkedWindow = window;
 
-        global.window.addEventListener && global.window.addEventListener("message", _.bind(function (event) {
+        global.window.addEventListener && global.window.addEventListener("message", (function (event) {
             if (event.source !== this.linkedWindow) {
                 return;
             }
 
             var message = {};
-            if (_.isString(event.data) && !_.isUndefined(global.JSON)) {
+            if (typeof event.data === 'string' && global.JSON !== undefined) {
                 try {
                     message = global.JSON.parse(event.data);
                 } catch (e) {
@@ -22,7 +36,7 @@ module.exports = (function () {
             if (message.command) {
                 this.eventObject.trigger(message.command, message.data);
             }
-        }, this));
+        }).bind(this));
     }
 
     /** Private Members **/
@@ -31,15 +45,15 @@ module.exports = (function () {
 
     /** Public Members **/
     PostMessage.prototype.send = function(command, data, targetOrigin) {
-        if (_.isUndefined(data)) {
+        if (data === undefined) {
             data = {};
         }
 
-        if (_.isUndefined(targetOrigin)) {
+        if (targetOrigin === undefined) {
             targetOrigin = '*';
         }
 
-        if (!this.linkedWindow || _.isUndefined(this.linkedWindow.postMessage) || _.isUndefined(global.window.JSON)) {
+        if (!this.linkedWindow || this.linkedWindow.postMessage === undefined || global.window.JSON === undefined) {
             return false;
         }
 
@@ -51,12 +65,12 @@ module.exports = (function () {
         return true;
     };
 
-    PostMessage.prototype.on = function () {
-        this.eventObject.on.apply(this.eventObject, arguments);
+    PostMessage.prototype.on = function (event, handle, options) {
+        document.addEventListener(event, handle, options);
     };
 
-    PostMessage.prototype.off = function () {
-        this.eventObject.off.apply(this.eventObject, arguments);
+    PostMessage.prototype.off = function (event, handle, options) {
+        document.removeEventListener(event, handle, options);
     };
 
     return PostMessage;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 - 2019-12-12
+
+- [feature] Remove lodash and JQuery from project
+
 ## 1.0.8 - 2019-07-18
 
 - [fix] remove lodash template dependency

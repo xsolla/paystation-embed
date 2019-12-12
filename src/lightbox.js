@@ -1,12 +1,30 @@
-var $ = require('jquery');
-var _ = require('lodash');
 var version = require('./version');
+var Helpers = require('./helpers');
 var PostMessage = require('./postmessage');
 
 module.exports = (function () {
     function LightBox() {
         require('./styles/lightbox.scss');
-        this.eventObject = $({});
+        this.eventObject = {
+            trigger: (function(eventName, data) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                try {
+                    var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
+                } catch(e) {
+                    var event = document.createEvent('CustomEvent');
+                    event.initCustomEvent(eventInNamespace, true, true, data);
+                }
+                document.dispatchEvent(event);
+            }).bind(this),
+            on: (function(eventName, handle, options) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                document.addEventListener(eventInNamespace, handle, options);
+            }).bind(this),
+            off: (function(eventName, handle, options) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                document.removeEventListener(eventInNamespace, handle, options);
+            }).bind(this)
+        };
         this.options = DEFAULT_OPTIONS;
         this.message = null;
     }
@@ -41,36 +59,49 @@ module.exports = (function () {
         width: 600
     };
 
+    var handleKeyupEventName = wrapEventInNamespace('keyup');
+
+    var handleKeyup = function(event) {
+        if (event.which == 27) {
+            this.closeFrame();
+        }
+    }
+
+    function wrapEventInNamespace(eventName) {
+        return eventName + '_' + EVENT_NAMESPACE;
+    }
+
     /** Private Members **/
     LightBox.prototype.triggerEvent = function () {
         this.eventObject.trigger.apply(this.eventObject, arguments);
     };
 
-    LightBox.prototype.measureScrollbar = function () { // thx walsh
-        var bodyElement = $(global.document.body);
+    LightBox.prototype.measureScrollbar = function () { // thx walsh: https://davidwalsh.name/detect-scrollbar-width
+        var scrollDiv = document.createElement("div");
+        scrollDiv.classList.add("scrollbar-measure");
+        scrollDiv.setAttribute("style",
+        "position: absolute;" +
+        "top: -9999px" +
+        "width: 50px" +
+        "height: 50px" +
+        "overflow: scroll"
+    );
 
-        var scrollDiv = $('<div></div>').css({
-            position: 'absolute',
-            top: '-9999px',
-            width: '50px',
-            height: '50px',
-            overflow: 'scroll'
-        });
+        document.body.appendChild(scrollDiv);
 
-        bodyElement.append(scrollDiv);
-        var scrollbarWidth = scrollDiv.get(0).offsetWidth - scrollDiv.get(0).clientWidth;
-        scrollDiv.remove();
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+        document.body.removeChild(scrollDiv);
 
         return scrollbarWidth;
     };
 
     /** Public Members **/
     LightBox.prototype.openFrame = function (url, options) {
-        this.options = _.extend({}, this.options, options);
+        this.options = Object.assign({}, this.options, options);
         options = this.options;
 
         var spinner = options.spinner === 'custom' && !!options.spinnerUrl ?
-            '<img class="spinner-custom" src="' + encodeURI(options.spinnerUrl) + '" />' : SPINNERS[options.spinner] || _.values(SPINNERS)[0];
+            '<img class="spinner-custom" src="' + encodeURI(options.spinnerUrl) + '" />' : SPINNERS[options.spinner] || Object.values(SPINNERS)[0];
 
         var template = function (settings) {
             var host = document.createElement('div');
@@ -101,180 +132,218 @@ module.exports = (function () {
             return host;
         };
 
-        var bodyElement = $(global.document.body);
-        var lightBoxElement = $(template({
+        var bodyElement = global.document.body;
+        var lightBoxElement = template({
             prefix: CLASS_PREFIX,
             url: url,
             spinner: spinner
-        }));
-        var lightBoxOverlayElement = lightBoxElement.find('.' + CLASS_PREFIX + '-overlay');
-        var lightBoxContentElement = lightBoxElement.find('.' + CLASS_PREFIX + '-content');
-        var lightBoxIframeElement = lightBoxContentElement.find('.' + CLASS_PREFIX + '-content-iframe');
-        var lightBoxSpinnerElement = lightBoxElement.find('.' + CLASS_PREFIX + '-spinner');
+        });
+        var lightBoxOverlayElement = lightBoxElement.querySelector('.' + CLASS_PREFIX + '-overlay');
+        var lightBoxContentElement = lightBoxElement.querySelector('.' + CLASS_PREFIX + '-content');
+        var lightBoxIframeElement = lightBoxContentElement.querySelector('.' + CLASS_PREFIX + '-content-iframe');
+        var lightBoxSpinnerElement = lightBoxElement.querySelector('.' + CLASS_PREFIX + '-spinner');
 
         var psDimensions = {
             width: '0px',
             height: '0px'
         };
 
-        lightBoxElement.css({
-            zIndex: options.zIndex
-        });
+        lightBoxElement.style.zIndex = options.zIndex;
 
-        lightBoxOverlayElement.css({
-            background: options.overlayBackground,
-            opacity: options.overlayOpacity
-        });
+        lightBoxOverlayElement.style.opacity = options.overlayOpacity;
+        lightBoxOverlayElement.style.backgroundColor = options.overlayBackground;
 
-        lightBoxContentElement.css({
-            margin: options.contentMargin,
-            background: options.contentBackground
-        });
+        lightBoxContentElement.style.backgroundColor = options.contentBackground;
+        lightBoxContentElement.style.margin = options.contentMargin;
 
         if (options.spinnerColor) {
-            lightBoxSpinnerElement.find('path').css({
-                fill: options.spinnerColor
-            });
+            lightBoxSpinnerElement.querySelector('path').style.fill = options.spinnerColor;
         }
 
         if (options.spinner === 'custom') {
-            lightBoxSpinnerElement.find('.spinner-custom').css({
-                '-webkit-animation-duration': options.spinnerRotationPeriod + 's',
-                'animation-duration': options.spinnerRotationPeriod + 's'
-            });
+            var spinnerCustom = lightBoxSpinnerElement.querySelector('.spinner-custom');
+            spinnerCustom.style['-webkit-animation-duration'] = options.spinnerRotationPeriod + 's;';
+            spinnerCustom.style['animation-duration'] = options.spinnerRotationPeriod + 's;';
         }
 
         if (options.closeByClick) {
-            lightBoxOverlayElement.on('click', _.bind(function () {
+            lightBoxOverlayElement.addEventListener('click', (function () {
                 this.closeFrame();
-            }, this));
+            }).bind(this));
         }
 
         bodyElement.append(lightBoxElement);
 
         if (options.closeByKeyboard) {
-            bodyElement.on('keyup' + EVENT_NAMESPACE, _.bind(function (event) {
-                if (event.which == 27) {
-                    this.closeFrame();
-                }
-            }, this));
+
+            bodyElement.addEventListener(handleKeyupEventName, handleKeyup);
+
+            bodyElement.addEventListener('keyup', (function(event) {
+
+                var clickEvent = document.createEvent('Event');
+                clickEvent.initEvent(handleKeyupEventName, false, true);
+                clickEvent.sourceEvent = event;
+
+                bodyElement.dispatchEvent(clickEvent);
+            }).bind(this), false);
         }
 
-        var showContent = _.bind(function () {
-            showContent = _.noop;
+        var showContent = once((function () {
             hideSpinner(options);
-            lightBoxContentElement.removeClass(CLASS_PREFIX + '-content__hidden');
+            lightBoxContentElement.classList.remove(CLASS_PREFIX + '-content__hidden')
             this.triggerEvent('load');
-        }, this);
+        }).bind(this));
+
+        function once(f) {
+            return function() {
+                f();
+                f = function() {};
+            }
+        }
+
 
         var lightBoxResize = function () {
-            lightBoxContentElement.css({
-                top: 0,
-                left: 0,
-                width: options.width ? options.width : psDimensions.width,
-                height: options.height ? options.height : psDimensions.height
-            });
+            var width = options.width ? options.width : psDimensions.width;
+            var height = options.height ? options.height : psDimensions.height;
 
-            var containerWidth = lightBoxElement.get(0).clientWidth,
-                containerHeight = lightBoxElement.get(0).clientHeight;
-            var contentWidth = lightBoxContentElement.outerWidth(true),
-                contentHeight = lightBoxContentElement.outerHeight(true);
-            var horMargin = contentWidth - lightBoxContentElement.outerWidth(),
-                vertMargin = contentHeight - lightBoxContentElement.outerHeight();
+            lightBoxContentElement.style.left = '0px';
+            lightBoxContentElement.style.top = '0px';
+            lightBoxContentElement.style.borderRadius = '8px';
+            lightBoxContentElement.style.width = width;
+            lightBoxContentElement.style.height = height;
+
+            var containerWidth = lightBoxElement.clientWidth,
+                containerHeight = lightBoxElement.clientHeight;
+
+            var contentWidth = outerWidth(lightBoxContentElement),
+                contentHeight = outerHeight(lightBoxContentElement);
+
+            var horMargin = contentWidth - lightBoxContentElement.offsetWidth,
+            vertMargin = contentHeight - lightBoxContentElement.offsetHeight;
+
             var horDiff = containerWidth - contentWidth,
                 vertDiff = containerHeight - contentHeight;
 
             if (horDiff < 0) {
-                lightBoxContentElement.width(containerWidth - horMargin);
+                lightBoxContentElement.style.width = containerWidth - horMargin + 'px';
             } else {
-                lightBoxContentElement.css('left', Math.round(horDiff / 2));
+                lightBoxContentElement.style.left = Math.round(horDiff / 2) + 'px';
             }
 
             if (vertDiff < 0) {
-                lightBoxContentElement.height(containerHeight - vertMargin);
+                lightBoxContentElement.style.height = containerHeight - vertMargin + 'px';
             } else {
-                lightBoxContentElement.css('top', Math.round(vertDiff / 2));
+                lightBoxContentElement.style.top = Math.round(vertDiff / 2) + 'px';
             }
         };
 
+        function outerWidth(el) {
+            var width = el.offsetWidth;
+            var style = getComputedStyle(el);
+
+            width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+            return width;
+          }
+
+        function outerHeight(el) {
+            var height = el.offsetHeight;
+            var style = getComputedStyle(el);
+
+            height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+            return height;
+        }
+
         var bodyStyles;
-        var hideScrollbar = _.bind(function () {
-            bodyStyles = _.object(_.map(['overflow', 'paddingRight'], function (key) {
-                return [key, bodyElement.css(key)];
+        var hideScrollbar = (function () {
+            bodyStyles = Helpers.zipObject(['overflow', 'paddingRight'].map(function (key) {
+                return [key, getComputedStyle(bodyElement)[key]];
             }));
 
-            if (global.window.innerWidth > bodyElement.outerWidth(true)) {
-                var bodyPad = parseInt((bodyElement.css('paddingRight') || 0), 10);
-                bodyElement.css({
-                    'paddingRight': bodyPad + this.measureScrollbar(),
-                    'overflow': 'hidden'
-                });
+            if (global.window.innerWidth > outerWidth(bodyElement)) {
+                var bodyPad = parseInt((getComputedStyle(bodyElement)[paddingRight] || 0), 10);
+                bodyElement.style.overflow = 'hidden;';
+                bodyElement.style.paddingRight = bodyPad + this.measureScrollbar();
             }
-        }, this);
+        }).bind(this);
 
         var resetScrollbar = function () {
-            bodyElement.css(bodyStyles || {});
+            if (bodyStyles) {
+                Object.keys(bodyStyles).forEach(function(key) {
+                    bodyElement.style[key] = bodyStyles[key];
+                })
+            }
         };
 
         var showSpinner = function () {
-            lightBoxSpinnerElement.show();
+            lightBoxSpinnerElement.style.display = 'block';
         };
 
         var hideSpinner = function () {
-            lightBoxSpinnerElement.hide();
+            lightBoxSpinnerElement.style.display = 'none';
         };
 
         var loadTimer;
-        lightBoxIframeElement.on('load', _.bind(function (event) {
+        lightBoxIframeElement.addEventListener('load', (function handleLoad(event) {
             var timeout = !options.width || !options.height ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {
                 showContent();
             }, timeout);
-            $(event.target).off(event);
-        }, this));
+            event.target.removeEventListener('load', handleLoad);
+        }).bind(this));
 
-        var iframeWindow = lightBoxIframeElement.get(0).contentWindow || lightBoxIframeElement.get(0);
+        var iframeWindow = lightBoxIframeElement.contentWindow || lightBoxIframeElement;
 
         // Cross-window communication
         this.message = new PostMessage(iframeWindow);
         if (options.width && options.height) {
-            this.message.on('dimensions', function () {
+            this.message.on('dimensions', (function () {
                 showContent();
-            });
+            }));
         } else {
-            this.message.on('dimensions', function (event, data) {
+            this.message.on('dimensions', (function (event) {
+                var data = event.detail;
                 if (data.dimensions) {
-                    psDimensions = _.object(_.map(['width', 'height'], function (dim) {
+                    psDimensions = Helpers.zipObject(['width', 'height'].map(function (dim) {
                         return [dim, Math.max(MIN_PS_DIMENSIONS[dim] || 0, data.dimensions[dim] || 0) + 'px'];
                     }));
 
                     lightBoxResize();
                 }
                 showContent();
-            });
+            }));
         }
-        this.message.on('widget-detection', _.bind(function () {
+        this.message.on('widget-detection', (function () {
             this.message.send('widget-detected', {version: version, lightBoxOptions: options});
-        }, this));
-        this.message.on('widget-close', _.bind(function () {
+        }).bind(this));
+        this.message.on('widget-close', (function () {
             this.closeFrame();
-        }, this));
-        this.message.on('status', _.bind(function (event, data) {
+        }).bind(this));
+        this.message.on('status', (function (event, data) {
             this.triggerEvent('status', data);
-        }, this));
+        }).bind(this));
 
         // Resize
-        $.event.add(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
+        var handleResizeEventName = 'resize' + EVENT_NAMESPACE;
+
+        var resizeEvent = document.createEvent('Event');
+        resizeEvent.initEvent(handleResizeEventName, false, true);
+
+        window.addEventListener(handleResizeEventName, lightBoxResize);
+
+        window.addEventListener('resize', function(event) {
+            resizeEvent.sourceEvent = event;
+            bodyElement.dispatchEvent(resizeEvent);
+        })
 
         // Clean up after close
-        this.on('close', _.bind(function (event) {
+        this.on('close', (function handleClose(event) {
             this.message.off();
-            bodyElement.off(EVENT_NAMESPACE);
-            $.event.remove(global.window, 'resize' + EVENT_NAMESPACE, lightBoxResize);
+            bodyElement.removeEventListener(handleKeyupEventName, handleKeyup)
+            window.removeEventListener(handleResizeEventName, lightBoxResize);
             lightBoxElement.remove();
             resetScrollbar();
-            $(event.target).off(event);
-        }, this));
+            event.target.removeEventListener('close', handleClose)
+        }).bind(this));
 
         if (options.width && options.height) {
             lightBoxResize();
@@ -302,6 +371,8 @@ module.exports = (function () {
     LightBox.prototype.getPostMessage = function () {
         return this.message;
     };
+
+    LightBox._NAMESPACE = EVENT_NAMESPACE;
 
     return LightBox;
 })();

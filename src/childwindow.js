@@ -1,12 +1,33 @@
-var $ = require('jquery');
-var _ = require('lodash');
 var version = require('./version');
 var PostMessage = require('./postmessage');
 
 module.exports = (function () {
     function ChildWindow() {
-        this.eventObject = $({});
+        this.eventObject = {
+            trigger: (function(eventName, data) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                try {
+                    var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
+                } catch(e) {
+                    var event = document.createEvent('CustomEvent');
+                    event.initCustomEvent(eventInNamespace, true, true, data);
+                }
+                document.dispatchEvent(event);
+            }).bind(this),
+            on: (function(eventName, handle, options) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                document.addEventListener(eventInNamespace, handle, options);
+            }).bind(this),
+            off: (function(eventName, handle, options) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                document.removeEventListener(eventInNamespace, handle, options);
+            }).bind(this)
+        };
         this.message = null;
+    }
+
+    function wrapEventInNamespace(eventName) {
+        return eventName + '_' + ChildWindow._NAMESPACE;
     }
 
     var DEFAULT_OPTIONS = {
@@ -17,46 +38,47 @@ module.exports = (function () {
     ChildWindow.prototype.eventObject = null;
     ChildWindow.prototype.childWindow = null;
 
-    ChildWindow.prototype.triggerEvent = function () {
-        this.eventObject.trigger.apply(this.eventObject, arguments);
+    ChildWindow.prototype.triggerEvent = function (event, data) {
+        this.eventObject.trigger(event, data);
     };
 
     /** Public Members **/
     ChildWindow.prototype.open = function (url, options) {
-        options = _.extend({}, DEFAULT_OPTIONS, options);
+        options = Object.assign({}, DEFAULT_OPTIONS, options);
 
         if (this.childWindow && !this.childWindow.closed) {
             this.childWindow.location.href = url;
         }
 
-        var addHandlers = _.bind(function () {
-            this.on('close', _.bind(function (event) {
+        var addHandlers = (function () {
+            this.on('close', (function handleClose(event) {
                 if (timer) {
                     global.clearTimeout(timer);
                 }
                 if (this.childWindow) {
                     this.childWindow.close();
                 }
-                $(event.target).off(event);
-            }, this));
+
+                event.target.removeEventListener('close', handleClose)
+            }).bind(this));
 
             // Cross-window communication
             this.message = new PostMessage(this.childWindow);
-            this.message.on('dimensions widget-detection', _.bind(function (event) {
+            this.message.on('dimensions widget-detection', (function widgetDetectionHandle(event) {
                 this.triggerEvent('load');
-                $(event.target).off(event);
-            }, this));
-            this.message.on('widget-detection', _.bind(function () {
+                event.target.removeEventListener('dimensions widget-detection', handleWidgetDetection);
+            }).bind(this));
+            this.message.on('widget-detection', (function () {
                 this.message.send('widget-detected', {version: version, childWindowOptions: options});
-            }, this));
-            this.message.on('status', _.bind(function (event, data) {
+            }).bind(this));
+            this.message.on('status', (function (event, data) {
                 this.triggerEvent('status', data);
-            }, this));
-            this.on('close', _.bind(function (event) {
+            }).bind(this));
+            this.on('close', (function handleClose(event) {
                 this.message.off();
-                $(event.target).off(event);
-            }, this));
-        }, this);
+                event.target.removeEventListener('close', handleClose);
+            }).bind(this));
+        }).bind(this);
 
         switch (options.target) {
             case '_self':
@@ -75,7 +97,7 @@ module.exports = (function () {
                 this.childWindow.focus();
                 addHandlers();
 
-                var checkWindow = _.bind(function () {
+                var checkWindow = (function () {
                     if (this.childWindow) {
                         if (this.childWindow.closed) {
                             this.triggerEvent('close');
@@ -83,7 +105,7 @@ module.exports = (function () {
                             timer = global.setTimeout(checkWindow, 100);
                         }
                     }
-                }, this);
+                }).bind(this);
                 var timer = global.setTimeout(checkWindow, 100);
                 break;
         }
@@ -95,17 +117,23 @@ module.exports = (function () {
         this.triggerEvent('close');
     };
 
-    ChildWindow.prototype.on = function () {
-        this.eventObject.on.apply(this.eventObject, arguments);
+    ChildWindow.prototype.on = function (event, handler) {
+        if (typeof handler !== 'function') {
+            return;
+        }
+
+        this.eventObject.on(event, handler);
     };
 
-    ChildWindow.prototype.off = function () {
-        this.eventObject.off.apply(this.eventObject, arguments);
+    ChildWindow.prototype.off = function (event, handler) {
+        this.eventObject.off(event, handler);
     };
 
     ChildWindow.prototype.getPostMessage = function () {
         return this.message;
     };
+
+    ChildWindow._NAMESPACE = 'CHILD_WINDOW';
 
     return ChildWindow;
 })();

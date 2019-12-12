@@ -1,5 +1,4 @@
-var _ = require('lodash');
-var $ = require('jquery');
+var Helpers = require('./helpers')
 var App = require('./app');
 
 var instance;
@@ -12,13 +11,12 @@ module.exports = (function () {
         return instance;
     };
 
-    return _.extend(_.object(_.map(['init', 'open', 'on', 'off', 'sendMessage', 'onMessage'], function (methodName) {
+    return Object.assign(Helpers.zipObject(['init', 'open', 'on', 'off', 'sendMessage', 'onMessage'].map(function (methodName) {
         var app = getInstance();
         return [methodName, function () {
             return app[methodName].apply(app, arguments);
         }];
     })), {
         eventTypes: App.eventTypes,
-        $: $
     });
 })();

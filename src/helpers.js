@@ -70,9 +70,18 @@ function param(a) {
 };
 
 
+function once(f) {
+  return function() {
+      f();
+      f = function() {};
+  }
+}
+
+
 module.exports = {
   isEmpty: isEmpty,
   uniq: uniq,
   zipObject: zipObject,
-  param: param
+  param: param,
+  once: once,
 }

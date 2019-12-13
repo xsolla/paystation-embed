@@ -188,19 +188,11 @@ module.exports = (function () {
             }).bind(this), false);
         }
 
-        var showContent = once((function () {
+        var showContent = Helpers.once((function () {
             hideSpinner(options);
             lightBoxContentElement.classList.remove(CLASS_PREFIX + '-content__hidden')
             this.triggerEvent('load');
         }).bind(this));
-
-        function once(f) {
-            return function() {
-                f();
-                f = function() {};
-            }
-        }
-
 
         var lightBoxResize = function () {
             var width = options.width ? options.width : psDimensions.width;

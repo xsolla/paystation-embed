@@ -1,28 +1,10 @@
 var version = require('./version');
+var Helpers = require('./helpers');
 var PostMessage = require('./postmessage');
 
 module.exports = (function () {
     function ChildWindow() {
-        this.eventObject = {
-            trigger: (function(eventName, data) {
-                var eventInNamespace = wrapEventInNamespace(eventName);
-                try {
-                    var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
-                } catch(e) {
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent(eventInNamespace, true, true, data);
-                }
-                document.dispatchEvent(event);
-            }).bind(this),
-            on: (function(eventName, handle, options) {
-                var eventInNamespace = wrapEventInNamespace(eventName);
-                document.addEventListener(eventInNamespace, handle, options);
-            }).bind(this),
-            off: (function(eventName, handle, options) {
-                var eventInNamespace = wrapEventInNamespace(eventName);
-                document.removeEventListener(eventInNamespace, handle, options);
-            }).bind(this)
-        };
+        this.eventObject = Helpers.addEventObject(this, wrapEventInNamespace);
         this.message = null;
     }
 

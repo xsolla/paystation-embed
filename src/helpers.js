@@ -77,8 +77,33 @@ function once(f) {
   }
 }
 
+function addEventObject(context, wrapEventInNamespace) {
+    var dummyWrapper = function(event) { return event };
+    var wrapEventInNamespace = wrapEventInNamespace || dummyWrapper;
+    return {
+      trigger: (function(eventName, data) {
+          var eventInNamespace = wrapEventInNamespace(eventName);
+          try {
+              var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
+          } catch(e) {
+              var event = document.createEvent('CustomEvent');
+              event.initCustomEvent(eventInNamespace, true, true, data);
+          }
+          document.dispatchEvent(event);
+      }).bind(context),
+      on: (function(eventName, handle, options) {
+          var eventInNamespace = wrapEventInNamespace(eventName);
+          document.addEventListener(eventInNamespace, handle, options);
+      }).bind(context),
+      off: (function(eventName, handle, options) {
+          var eventInNamespace = wrapEventInNamespace(eventName);
+          document.removeEventListener(eventInNamespace, handle, options);
+      }).bind(context)
+  };
+}
 
 module.exports = {
+  addEventObject: addEventObject,
   isEmpty: isEmpty,
   uniq: uniq,
   zipObject: zipObject,

@@ -1,23 +1,8 @@
+var Helpers = require('./helpers');
+
 module.exports = (function () {
     function PostMessage(window) {
-        this.eventObject = {
-            trigger: (function(event, data) {
-                try {
-                    var event = new CustomEvent(event, {detail: data}); // Not working in IE
-                } catch(e) {
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent(event, true, true, data);
-                }
-                document.dispatchEvent(event);
-            }).bind(this),
-            on: (function(event, handle, options) {
-                document.addEventListener(event, handle, options);
-            }).bind(this),
-            off: (function(event, handle, options) {
-                document.removeEventListener(event, handle, options);
-            }).bind(this)
-        };
-
+        this.eventObject = Helpers.addEventObject(this);
         this.linkedWindow = window;
 
         global.window.addEventListener && global.window.addEventListener("message", (function (event) {

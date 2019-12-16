@@ -7,23 +7,7 @@ var Device = require('./device');
 module.exports = (function () {
     function App() {
         this.config = Object.assign({}, DEFAULT_CONFIG);
-        this.eventObject = {
-            trigger: (function(event, data) {
-                try {
-                    var event = new CustomEvent(event, {detail: data}); // Not working in IE
-                } catch(e) {
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent(event, true, true, data);
-                }
-                document.dispatchEvent(event);
-            }).bind(this),
-            on: (function(event, handle, options) {
-                document.addEventListener(event, handle, options);
-            }).bind(this),
-            off: (function(event, handle, options) {
-                document.removeEventListener(event, handle, options);
-            }).bind(this)
-        };
+        this.eventObject = Helpers.addEventObject(this);
         this.isInitiated = false;
         this.postMessage = null;
     }

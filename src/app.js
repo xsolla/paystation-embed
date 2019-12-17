@@ -5,6 +5,14 @@ var ChildWindow = require('./childwindow');
 var Device = require('./device');
 
 module.exports = (function () {
+    function ready(fn) {
+        if (document.readyState != 'loading'){
+          fn();
+        } else {
+          document.addEventListener('DOMContentLoaded', fn);
+        }
+    }
+
     function App() {
         this.config = Object.assign({}, DEFAULT_CONFIG);
         this.eventObject = Helpers.addEventObject(this);
@@ -42,23 +50,7 @@ module.exports = (function () {
     /** Private Members **/
     App.prototype.config = {};
     App.prototype.isInitiated = false;
-    App.prototype.eventObject = {
-        trigger: (function(event, data) {
-            try {
-                var event = new CustomEvent(event, {detail: data}); // Not working in IE
-            } catch(e) {
-                var event = document.createEvent('CustomEvent');
-                event.initCustomEvent(event, true, true, data);
-            }
-            document.dispatchEvent(event);
-        }).bind(this),
-        on: (function(event, handle, options) {
-            document.addEventListener(event, handle, options);
-        }).bind(this),
-        off: (function(event, handle, options) {
-            document.removeEventListener(event, handle, options);
-        }).bind(this)
-    };
+    App.prototype.eventObject = Helpers.addEventObject(this);
 
     App.prototype.getPaystationUrl = function () {
         var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
@@ -101,34 +93,36 @@ module.exports = (function () {
      * Initialize widget with options
      * @param options
      */
-    App.prototype.init = function (options) {
-        this.isInitiated = true;
-        this.config = Object.assign({}, DEFAULT_CONFIG, options);
+    App.prototype.init = function(options) {
+        function initialize(options) {
+            this.isInitiated = true;
+            this.config = Object.assign({}, DEFAULT_CONFIG, options);
 
-        var bodyElement = global.document.body;
-        var clickEventName = 'click' + EVENT_NAMESPACE;
+            var bodyElement = global.document.body;
+            var clickEventName = 'click' + EVENT_NAMESPACE;
 
-        var handleClickEvent = (function(event) {
-            var targetElement = document.querySelector('[' + ATTR_PREFIX + ']');
-            if (event.sourceEvent.target === targetElement) {
-                this.open.call(this, targetElement);
-            }
-        }).bind(this);
+            var handleClickEvent = (function(event) {
+                var targetElement = document.querySelector('[' + ATTR_PREFIX + ']');
+                if (event.sourceEvent.target === targetElement) {
+                    this.open.call(this, targetElement);
+                }
+            }).bind(this);
 
-        bodyElement.removeEventListener(clickEventName, handleClickEvent);
+            bodyElement.removeEventListener(clickEventName, handleClickEvent);
 
-        var clickEvent = document.createEvent('Event');
-        clickEvent.initEvent(clickEventName, false, true);
+            var clickEvent = document.createEvent('Event');
+            clickEvent.initEvent(clickEventName, false, true);
 
-        bodyElement.addEventListener('click', (function(event) {
-            clickEvent.sourceEvent = event;
-            bodyElement.dispatchEvent(clickEvent);
-        }).bind(this), false);
+            bodyElement.addEventListener('click', (function(event) {
+                clickEvent.sourceEvent = event;
+                bodyElement.dispatchEvent(clickEvent);
+            }).bind(this), false);
 
-        bodyElement.addEventListener(clickEventName, handleClickEvent);
-
-        this.triggerEvent(App.eventTypes.INIT);
-    };
+            bodyElement.addEventListener(clickEventName, handleClickEvent);
+            this.triggerEvent(App.eventTypes.INIT);
+        }
+        ready(initialize.bind(this, options));
+    }
 
     /**
      * Open payment interface (PayStation)

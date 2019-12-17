@@ -80,6 +80,7 @@ function once(f) {
 function addEventObject(context, wrapEventInNamespace) {
     var dummyWrapper = function(event) { return event };
     var wrapEventInNamespace = wrapEventInNamespace || dummyWrapper;
+
     return {
       trigger: (function(eventName, data) {
           var eventInNamespace = wrapEventInNamespace(eventName);

@@ -41,6 +41,7 @@ module.exports = (function () {
     };
 
     var handleKeyupEventName = wrapEventInNamespace('keyup');
+    var handleResizeEventName = wrapEventInNamespace('resize');
 
     var handleGlobalKeyup = function(event) {
 
@@ -58,6 +59,9 @@ module.exports = (function () {
     }
 
     var handleGlobalResize = function() {
+        var resizeEvent = document.createEvent('Event');
+        resizeEvent.initEvent(handleResizeEventName, false, true);
+
         document.body.dispatchEvent(resizeEvent);
     }
 
@@ -297,16 +301,11 @@ module.exports = (function () {
         this.message.on('widget-close', (function () {
             this.closeFrame();
         }).bind(this));
-        this.message.on('status', (function (event, data) {
-            this.triggerEvent('status', data);
+        this.message.on('status', (function (event) {
+            this.triggerEvent('status', event.detail);
         }).bind(this));
 
         // Resize
-        var handleResizeEventName = 'resize' + EVENT_NAMESPACE;
-
-        var resizeEvent = document.createEvent('Event');
-        resizeEvent.initEvent(handleResizeEventName, false, true);
-
         window.addEventListener(handleResizeEventName, lightBoxResize.bind(this));
         window.addEventListener('resize', handleGlobalResize.bind(this));
 

@@ -1,8 +1,12 @@
 var Helpers = require('./helpers');
 
 module.exports = (function () {
+    function wrapEventInNamespace(eventName) {
+        return eventName + '_' + PostMessage._NAMESPACE;
+    }
+
     function PostMessage(window) {
-        this.eventObject = Helpers.addEventObject(this);
+        this.eventObject = Helpers.addEventObject(this, wrapEventInNamespace);
         this.linkedWindow = window;
 
         global.window.addEventListener && global.window.addEventListener("message", (function (event) {
@@ -51,12 +55,15 @@ module.exports = (function () {
     };
 
     PostMessage.prototype.on = function (event, handle, options) {
-        document.addEventListener(event, handle, options);
+        this.eventObject.on(event, handle, options);
     };
 
     PostMessage.prototype.off = function (event, handle, options) {
-        document.removeEventListener(event, handle, options);
+        this.eventObject.off(event, handle, options);
     };
+
+    PostMessage._NAMESPACE = 'POST_MESSAGE';
+
 
     return PostMessage;
 })();

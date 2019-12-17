@@ -172,7 +172,8 @@ module.exports = (function () {
                 this.triggerEvent(App.eventTypes.CLOSE);
                 this.triggerEvent(App.eventTypes.CLOSE_WINDOW);
             }).bind(this));
-            childWindow.on('status', (function (event, statusData) {
+            childWindow.on('status', (function (event) {
+                var statusData = event.detail;
                 this.triggerEvent(App.eventTypes.STATUS, statusData);
                 triggerSplitStatus(statusData);
             }).bind(this));
@@ -191,7 +192,8 @@ module.exports = (function () {
                 this.triggerEvent(App.eventTypes.CLOSE);
                 this.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
             }).bind(this));
-            lightBox.on('status', (function (event, statusData) {
+            lightBox.on('status', (function (event) {
+                var statusData = event.detail;
                 this.triggerEvent(App.eventTypes.STATUS, statusData);
                 triggerSplitStatus(statusData);
             }).bind(this));
@@ -204,12 +206,12 @@ module.exports = (function () {
      * @param event One or more space-separated event types (init, open, load, close, status, status-invoice, status-delivering, status-troubled, status-done)
      * @param handler A function to execute when the event is triggered
      */
-    App.prototype.on = function (event, handler) {
+    App.prototype.on = function (event, handler, options) {
         if (typeof handler !== 'function') {
             return;
         }
 
-        this.eventObject.on(event, handler);
+        this.eventObject.on(event, handler, options);
     };
 
     /**
@@ -217,8 +219,8 @@ module.exports = (function () {
      * @param event One or more space-separated event types
      * @param handler A handler function previously attached for the event(s)
      */
-    App.prototype.off = function (event, handler) {
-        this.eventObject.off(event, handler);
+    App.prototype.off = function (event, handler, options) {
+        this.eventObject.off(event, handler, options);
     };
 
     /**

@@ -53,8 +53,8 @@ module.exports = (function () {
             this.message.on('widget-detection', (function () {
                 this.message.send('widget-detected', {version: version, childWindowOptions: options});
             }).bind(this));
-            this.message.on('status', (function (event, data) {
-                this.triggerEvent('status', data);
+            this.message.on('status', (function (event) {
+                this.triggerEvent('status', event.detail);
             }).bind(this));
             this.on('close', (function handleClose(event) {
                 this.message.off();
@@ -99,16 +99,16 @@ module.exports = (function () {
         this.triggerEvent('close');
     };
 
-    ChildWindow.prototype.on = function (event, handler) {
+    ChildWindow.prototype.on = function (event, handler, options) {
         if (typeof handler !== 'function') {
             return;
         }
 
-        this.eventObject.on(event, handler);
+        this.eventObject.on(event, handler, options);
     };
 
-    ChildWindow.prototype.off = function (event, handler) {
-        this.eventObject.off(event, handler);
+    ChildWindow.prototype.off = function (event, handler, options) {
+        this.eventObject.off(event, handler, options);
     };
 
     ChildWindow.prototype.getPostMessage = function () {

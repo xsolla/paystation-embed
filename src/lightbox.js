@@ -153,7 +153,7 @@ module.exports = (function () {
             }).bind(this));
         }
 
-        bodyElement.append(lightBoxElement);
+        bodyElement.appendChild(lightBoxElement);
 
         if (options.closeByKeyboard) {
 
@@ -313,7 +313,7 @@ module.exports = (function () {
             this.message.off();
             bodyElement.removeEventListener(handleKeyupEventName, handleKeyup)
             window.removeEventListener(handleResizeEventName, lightBoxResize);
-            lightBoxElement.remove();
+            lightBoxElement.parentNode.removeChild(lightBoxElement);
             resetScrollbar();
             event.target.removeEventListener('close', handleClose)
         }).bind(this));

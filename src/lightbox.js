@@ -42,10 +42,23 @@ module.exports = (function () {
 
     var handleKeyupEventName = wrapEventInNamespace('keyup');
 
-    var handleKeyup = function(event) {
-        if (event.which == 27) {
+    var handleGlobalKeyup = function(event) {
+
+        var clickEvent = document.createEvent('Event');
+        clickEvent.initEvent(handleKeyupEventName, false, true);
+        clickEvent.sourceEvent = event;
+
+        document.body.dispatchEvent(clickEvent);
+    }
+
+    var handleSpecificKeyup = function(event) {
+        if (event.sourceEvent.which == 27) {
             this.closeFrame();
         }
+    }
+
+    var handleGlobalResize = function() {
+        document.body.dispatchEvent(resizeEvent);
     }
 
     function wrapEventInNamespace(eventName) {
@@ -157,16 +170,9 @@ module.exports = (function () {
 
         if (options.closeByKeyboard) {
 
-            bodyElement.addEventListener(handleKeyupEventName, handleKeyup);
+            bodyElement.addEventListener(handleKeyupEventName, handleSpecificKeyup.bind(this));
 
-            bodyElement.addEventListener('keyup', (function(event) {
-
-                var clickEvent = document.createEvent('Event');
-                clickEvent.initEvent(handleKeyupEventName, false, true);
-                clickEvent.sourceEvent = event;
-
-                bodyElement.dispatchEvent(clickEvent);
-            }).bind(this), false);
+            bodyElement.addEventListener('keyup', handleGlobalKeyup.bind(this), false);
         }
 
         var showContent = Helpers.once((function () {
@@ -301,17 +307,18 @@ module.exports = (function () {
         var resizeEvent = document.createEvent('Event');
         resizeEvent.initEvent(handleResizeEventName, false, true);
 
-        window.addEventListener(handleResizeEventName, lightBoxResize);
-
-        window.addEventListener('resize', function(event) {
-            resizeEvent.sourceEvent = event;
-            bodyElement.dispatchEvent(resizeEvent);
-        })
+        window.addEventListener(handleResizeEventName, lightBoxResize.bind(this));
+        window.addEventListener('resize', handleGlobalResize.bind(this));
 
         // Clean up after close
         this.on('close', (function handleClose(event) {
             this.message.off();
-            bodyElement.removeEventListener(handleKeyupEventName, handleKeyup)
+
+            bodyElement.removeEventListener(handleKeyupEventName, handleSpecificKeyup)
+            bodyElement.removeEventListener('keyup', handleGlobalKeyup);
+
+            window.removeEventListener('resize', handleGlobalResize)
+
             window.removeEventListener(handleResizeEventName, lightBoxResize);
             lightBoxElement.parentNode.removeChild(lightBoxElement);
             resetScrollbar();

@@ -81,6 +81,10 @@ function addEventObject(context, wrapEventInNamespace) {
     var dummyWrapper = function(event) { return event };
     var wrapEventInNamespace = wrapEventInNamespace || dummyWrapper;
 
+    function isStringContainedSpace(str) {
+      return / /.test(str)
+    }
+
     return {
       trigger: (function(eventName, data) {
           var eventInNamespace = wrapEventInNamespace(eventName);
@@ -93,12 +97,39 @@ function addEventObject(context, wrapEventInNamespace) {
           document.dispatchEvent(event);
       }).bind(context),
       on: (function(eventName, handle, options) {
+
+        function addEvent(eventName, handle, options) {
           var eventInNamespace = wrapEventInNamespace(eventName);
           document.addEventListener(eventInNamespace, handle, options);
+        }
+
+        if (isStringContainedSpace(eventName)) {
+          var events = eventName.split(' ');
+          console.log('events', events);
+          events.forEach(function(parsedEventName) {
+            addEvent(parsedEventName, handle, options)
+          })
+        } else {
+          addEvent(eventName, handle, options);
+        }
+
       }).bind(context),
       off: (function(eventName, handle, options) {
+
+        function removeEvent(eventName, handle, options) {
           var eventInNamespace = wrapEventInNamespace(eventName);
           document.removeEventListener(eventInNamespace, handle, options);
+        }
+
+        if (isStringContainedSpace(eventName)) {
+          var events = eventName.split(' ');
+          events.forEach(function(parsedEventName) {
+            removeEvent(parsedEventName, handle, options)
+          })
+        } else {
+          removeEvent(eventName, handle, options);
+        }
+
       }).bind(context)
   };
 }

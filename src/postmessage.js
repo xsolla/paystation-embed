@@ -2,7 +2,7 @@ var Helpers = require('./helpers');
 
 module.exports = (function () {
     function wrapEventInNamespace(eventName) {
-        return eventName + '_' + PostMessage._NAMESPACE;
+        return PostMessage._NAMESPACE + '_' + eventName;
     }
 
     function PostMessage(window) {

@@ -11,7 +11,6 @@ module.exports = (function () {
     }
 
     var CLASS_PREFIX = 'xpaystation-widget-lightbox';
-    var EVENT_NAMESPACE = '.xpaystation-widget-lightbox';
     var DEFAULT_OPTIONS = {
         width: null,
         height: '100%',
@@ -66,7 +65,7 @@ module.exports = (function () {
     }
 
     function wrapEventInNamespace(eventName) {
-        return eventName + '_' + EVENT_NAMESPACE;
+        return LightBox._NAMESPACE + '_' + eventName;
     }
 
     /** Private Members **/
@@ -96,6 +95,7 @@ module.exports = (function () {
     /** Public Members **/
     LightBox.prototype.openFrame = function (url, options) {
         this.options = Object.assign({}, this.options, options);
+        var HandleBoundSpecificKeyup = handleSpecificKeyup.bind(this);
         options = this.options;
 
         var spinner = options.spinner === 'custom' && !!options.spinnerUrl ?
@@ -174,14 +174,14 @@ module.exports = (function () {
 
         if (options.closeByKeyboard) {
 
-            bodyElement.addEventListener(handleKeyupEventName, handleSpecificKeyup.bind(this));
+            bodyElement.addEventListener(handleKeyupEventName, HandleBoundSpecificKeyup);
 
-            bodyElement.addEventListener('keyup', handleGlobalKeyup.bind(this), false);
+            bodyElement.addEventListener('keyup', handleGlobalKeyup, false);
         }
 
         var showContent = Helpers.once((function () {
             hideSpinner(options);
-            lightBoxContentElement.classList.remove(CLASS_PREFIX + '-content__hidden')
+            lightBoxContentElement.classList.remove(CLASS_PREFIX + '-content__hidden');
             this.triggerEvent('load');
         }).bind(this));
 
@@ -265,14 +265,14 @@ module.exports = (function () {
             lightBoxSpinnerElement.style.display = 'none';
         };
 
-        var loadTimer;
-        lightBoxIframeElement.addEventListener('load', (function handleLoad(event) {
+        lightBoxIframeElement.addEventListener('load', function handleLoad(event) {
             var timeout = !options.width || !options.height ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {
                 showContent();
             }, timeout);
-            event.target.removeEventListener('load', handleLoad);
-        }).bind(this));
+            lightBoxIframeElement.removeEventListener('load', handleLoad);
+
+        });
 
         var iframeWindow = lightBoxIframeElement.contentWindow || lightBoxIframeElement;
 
@@ -306,14 +306,14 @@ module.exports = (function () {
         }).bind(this));
 
         // Resize
-        window.addEventListener(handleResizeEventName, lightBoxResize.bind(this));
-        window.addEventListener('resize', handleGlobalResize.bind(this));
+        window.addEventListener(handleResizeEventName, lightBoxResize);
+        window.addEventListener('resize', handleGlobalResize);
 
         // Clean up after close
-        this.on('close', (function handleClose(event) {
-            this.message.off();
-
-            bodyElement.removeEventListener(handleKeyupEventName, handleSpecificKeyup)
+        var that = this;
+        this.on('close', function handleClose(event) {
+            that.message.off();
+            bodyElement.removeEventListener(handleKeyupEventName, HandleBoundSpecificKeyup)
             bodyElement.removeEventListener('keyup', handleGlobalKeyup);
 
             window.removeEventListener('resize', handleGlobalResize)
@@ -321,15 +321,14 @@ module.exports = (function () {
             window.removeEventListener(handleResizeEventName, lightBoxResize);
             lightBoxElement.parentNode.removeChild(lightBoxElement);
             resetScrollbar();
-            event.target.removeEventListener('close', handleClose)
-        }).bind(this));
+            that.off('close', handleClose);
+        });
 
         if (options.width && options.height) {
             lightBoxResize();
         }
         showSpinner();
         hideScrollbar();
-
         this.triggerEvent('open');
     };
 
@@ -351,7 +350,7 @@ module.exports = (function () {
         return this.message;
     };
 
-    LightBox._NAMESPACE = EVENT_NAMESPACE;
+    LightBox._NAMESPACE = '.xpaystation-widget-lightbox';
 
     return LightBox;
 })();

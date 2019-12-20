@@ -72,7 +72,7 @@ function param(a) {
 
 function once(f) {
   return function() {
-      f();
+      f(arguments);
       f = function() {};
   }
 }
@@ -80,6 +80,7 @@ function once(f) {
 function addEventObject(context, wrapEventInNamespace) {
     var dummyWrapper = function(event) { return event };
     var wrapEventInNamespace = wrapEventInNamespace || dummyWrapper;
+    var eventsList = [];
 
     function isStringContainedSpace(str) {
       return / /.test(str)
@@ -101,11 +102,11 @@ function addEventObject(context, wrapEventInNamespace) {
         function addEvent(eventName, handle, options) {
           var eventInNamespace = wrapEventInNamespace(eventName);
           document.addEventListener(eventInNamespace, handle, options);
+          eventsList.push({name: eventInNamespace, handle: handle, options: options });
         }
 
         if (isStringContainedSpace(eventName)) {
           var events = eventName.split(' ');
-          console.log('events', events);
           events.forEach(function(parsedEventName) {
             addEvent(parsedEventName, handle, options)
           })
@@ -114,11 +115,23 @@ function addEventObject(context, wrapEventInNamespace) {
         }
 
       }).bind(context),
+
       off: (function(eventName, handle, options) {
+        const offAllEvents = !eventName && !handle && !options;
+
+        if (offAllEvents) {
+          eventsList.forEach(function(event) {
+            document.removeEventListener(event.name, event.handle, event.options);
+          });
+          return;
+        }
 
         function removeEvent(eventName, handle, options) {
           var eventInNamespace = wrapEventInNamespace(eventName);
           document.removeEventListener(eventInNamespace, handle, options);
+          eventsList = eventsList.filter(function(event) {
+            return event.name !== eventInNamespace;
+          });
         }
 
         if (isStringContainedSpace(eventName)) {

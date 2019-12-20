@@ -9,7 +9,7 @@ module.exports = (function () {
     }
 
     function wrapEventInNamespace(eventName) {
-        return eventName + '_' + ChildWindow._NAMESPACE;
+        return ChildWindow._NAMESPACE + '_' + eventName;
     }
 
     var DEFAULT_OPTIONS = {
@@ -33,34 +33,36 @@ module.exports = (function () {
         }
 
         var addHandlers = (function () {
-            this.on('close', (function handleClose(event) {
+            var that = this;
+            this.on('close', function handleClose() {
                 if (timer) {
                     global.clearTimeout(timer);
                 }
-                if (this.childWindow) {
-                    this.childWindow.close();
+                if (that.childWindow) {
+                    that.childWindow.close();
                 }
 
-                event.target.removeEventListener('close', handleClose)
-            }).bind(this));
+                that.off('close', handleClose)
+            });
 
             // Cross-window communication
+            var that = this;
             this.message = new PostMessage(this.childWindow);
-            this.message.on('dimensions widget-detection', (function widgetDetectionHandle(event) {
-                this.triggerEvent('load');
-                event.target.removeEventListener('dimensions widget-detection', handleWidgetDetection);
-            }).bind(this));
-            this.message.on('widget-detection', (function () {
-                this.message.send('widget-detected', {version: version, childWindowOptions: options});
-            }).bind(this));
-            this.message.on('status', (function (event) {
-                this.triggerEvent('status', event.detail);
-            }).bind(this));
-            this.on('close', (function handleClose(event) {
-                this.message.off();
-                event.target.removeEventListener('close', handleClose);
-            }).bind(this));
-        }).bind(this);
+            this.message.on('dimensions widget-detection', function handleWidgetDetection(event) {
+                that.triggerEvent('load');
+                that.message.off('dimensions widget-detection', handleWidgetDetection)
+            });
+            this.message.on('widget-detection', function () {
+                that.message.send('widget-detected', {version: version, childWindowOptions: options});
+            });
+            this.message.on('status', function (event) {
+                that.triggerEvent('status', event.detail);
+            });
+            this.on('close', function handleClose(event) {
+                that.message.off();
+                that.off('close', handleClose);
+            });
+        });
 
         switch (options.target) {
             case '_self':

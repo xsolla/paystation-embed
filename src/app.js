@@ -155,48 +155,57 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
+
+
         var url = this.getPaystationUrl() + Helpers.param(query);
+        var that = this;
+
+        function handleStatus(event) {
+            var statusData = event.detail;
+            that.triggerEvent(App.eventTypes.STATUS, statusData);
+            triggerSplitStatus(statusData);
+        }
 
         this.postMessage = null;
         if ((new Device).isMobile()) {
             var childWindow = new ChildWindow;
-            childWindow.on('open', (function () {
-                this.postMessage = childWindow.getPostMessage();
-                this.triggerEvent(App.eventTypes.OPEN);
-                this.triggerEvent(App.eventTypes.OPEN_WINDOW);
-            }).bind(this));
-            childWindow.on('load', (function () {
-                this.triggerEvent(App.eventTypes.LOAD);
-            }).bind(this));
-            childWindow.on('close', (function () {
-                this.triggerEvent(App.eventTypes.CLOSE);
-                this.triggerEvent(App.eventTypes.CLOSE_WINDOW);
-            }).bind(this));
-            childWindow.on('status', (function (event) {
-                var statusData = event.detail;
-                this.triggerEvent(App.eventTypes.STATUS, statusData);
-                triggerSplitStatus(statusData);
-            }).bind(this));
+            childWindow.on('open', function handleOpen() {
+                that.postMessage = childWindow.getPostMessage();
+                that.triggerEvent(App.eventTypes.OPEN);
+                that.triggerEvent(App.eventTypes.OPEN_WINDOW);
+                childWindow.off('open', handleOpen);
+            });
+            childWindow.on('load', function handleLoad() {
+                that.triggerEvent(App.eventTypes.LOAD);
+                childWindow.off('load', handleLoad);
+            });
+            childWindow.on('close', function handleClose() {
+                that.triggerEvent(App.eventTypes.CLOSE);
+                that.triggerEvent(App.eventTypes.CLOSE_WINDOW);
+                childWindow.off('status', handleStatus);
+                childWindow.off('close', handleClose);
+            });
+            childWindow.on('status', handleStatus);
             childWindow.open(url, this.config.childWindow);
         } else {
             var lightBox = new LightBox;
-            lightBox.on('open', (function () {
-                this.postMessage = lightBox.getPostMessage();
-                this.triggerEvent(App.eventTypes.OPEN);
-                this.triggerEvent(App.eventTypes.OPEN_LIGHTBOX);
-            }).bind(this));
-            lightBox.on('load', (function () {
-                this.triggerEvent(App.eventTypes.LOAD);
-            }).bind(this));
-            lightBox.on('close', (function () {
-                this.triggerEvent(App.eventTypes.CLOSE);
-                this.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
-            }).bind(this));
-            lightBox.on('status', (function (event) {
-                var statusData = event.detail;
-                this.triggerEvent(App.eventTypes.STATUS, statusData);
-                triggerSplitStatus(statusData);
-            }).bind(this));
+            lightBox.on('open', function handleOpen() {
+                that.postMessage = lightBox.getPostMessage();
+                that.triggerEvent(App.eventTypes.OPEN);
+                that.triggerEvent(App.eventTypes.OPEN_LIGHTBOX);
+                lightBox.off('open', handleOpen);
+            });
+            lightBox.on('load', function handleLoad() {
+                that.triggerEvent(App.eventTypes.LOAD);
+                lightBox.off('load', handleLoad);
+            });
+            lightBox.on('close', function handleClose() {
+                that.triggerEvent(App.eventTypes.CLOSE);
+                that.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
+                lightBox.off('status', handleStatus);
+                lightBox.off('close', handleClose);
+            });
+            lightBox.on('status', handleStatus);
             lightBox.openFrame(url, this.config.lightbox);
         }
     };

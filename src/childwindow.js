@@ -32,9 +32,9 @@ module.exports = (function () {
             this.childWindow.location.href = url;
         }
 
-        var addHandlers = (function () {
-            var that = this;
-            this.on('close', function handleClose() {
+        var that = this;
+        var addHandlers = function () {
+            that.on('close', function handleClose() {
                 if (timer) {
                     global.clearTimeout(timer);
                 }
@@ -46,23 +46,23 @@ module.exports = (function () {
             });
 
             // Cross-window communication
-            var that = this;
-            this.message = new PostMessage(this.childWindow);
-            this.message.on('dimensions widget-detection', function handleWidgetDetection(event) {
+            that.message = new PostMessage(that.childWindow);
+            that.message.on('dimensions widget-detection', function handleWidgetDetection() {
                 that.triggerEvent('load');
-                that.message.off('dimensions widget-detection', handleWidgetDetection)
+                that.message.off('dimensions widget-detection', handleWidgetDetection);
             });
-            this.message.on('widget-detection', function () {
+            that.message.on('widget-detection', function handleWidgetDetection() {
                 that.message.send('widget-detected', {version: version, childWindowOptions: options});
+                that.message.off('widget-detection', handleWidgetDetection);
             });
-            this.message.on('status', function (event) {
+            that.message.on('status', function (event) {
                 that.triggerEvent('status', event.detail);
             });
-            this.on('close', function handleClose(event) {
+            that.on('close', function handleClose() {
                 that.message.off();
                 that.off('close', handleClose);
             });
-        });
+        };
 
         switch (options.target) {
             case '_self':

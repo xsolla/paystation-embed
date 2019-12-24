@@ -243,7 +243,7 @@ module.exports = (function () {
             }));
 
             if (global.window.innerWidth > outerWidth(bodyElement)) {
-                var bodyPad = parseInt((getComputedStyle(bodyElement)[paddingRight] || 0), 10);
+                var bodyPad = parseInt((getComputedStyle(bodyElement)['paddingRight'] || 0), 10);
                 bodyElement.style.overflow = 'hidden;';
                 bodyElement.style.paddingRight = bodyPad + this.measureScrollbar();
             }
@@ -265,6 +265,7 @@ module.exports = (function () {
             lightBoxSpinnerElement.style.display = 'none';
         };
 
+        var loadTimer;
         lightBoxIframeElement.addEventListener('load', function handleLoad(event) {
             var timeout = !options.width || !options.height ? 30000 : 1000; //30000 if psDimensions will not arrive
             loadTimer = global.setTimeout(function () {

@@ -61,7 +61,7 @@ module.exports = (function () {
         var resizeEvent = document.createEvent('Event');
         resizeEvent.initEvent(handleResizeEventName, false, true);
 
-        document.body.dispatchEvent(resizeEvent);
+        window.dispatchEvent(resizeEvent);
     }
 
     function wrapEventInNamespace(eventName) {

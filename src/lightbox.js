@@ -147,7 +147,12 @@ module.exports = (function () {
         };
 
         function withDefaultPXUnit(value) {
-            return typeof value === 'number' ? value + 'px' : value
+            var isStringWithoutUnit = typeof value === 'string' && String(Number.parseFloat(value)).length === value.length;
+            var valuePX = value + 'px';
+            if (isStringWithoutUnit) {
+                return withPXValue;
+            }
+            return typeof value === 'number' ? valuePX : value
         }
 
         lightBoxElement.style.zIndex = options.zIndex;

@@ -77,12 +77,12 @@ module.exports = (function () {
         var scrollDiv = document.createElement("div");
         scrollDiv.classList.add("scrollbar-measure");
         scrollDiv.setAttribute("style",
-        "position: absolute;" +
-        "top: -9999px" +
-        "width: 50px" +
-        "height: 50px" +
-        "overflow: scroll"
-    );
+            "position: absolute;" +
+            "top: -9999px" +
+            "width: 50px" +
+            "height: 50px" +
+            "overflow: scroll"
+        );
 
         document.body.appendChild(scrollDiv);
 
@@ -146,13 +146,17 @@ module.exports = (function () {
             height: '0px'
         };
 
+        function withDefaultPXUnit(value) {
+            return typeof value === 'number' ? value + 'px' : value
+        }
+
         lightBoxElement.style.zIndex = options.zIndex;
 
         lightBoxOverlayElement.style.opacity = options.overlayOpacity;
         lightBoxOverlayElement.style.backgroundColor = options.overlayBackground;
 
         lightBoxContentElement.style.backgroundColor = options.contentBackground;
-        lightBoxContentElement.style.margin = options.contentMargin;
+        lightBoxContentElement.style.margin = withDefaultPXUnit(options.contentMargin);
 
         if (options.spinnerColor) {
             lightBoxSpinnerElement.querySelector('path').style.fill = options.spinnerColor;
@@ -192,8 +196,8 @@ module.exports = (function () {
             lightBoxContentElement.style.left = '0px';
             lightBoxContentElement.style.top = '0px';
             lightBoxContentElement.style.borderRadius = '8px';
-            lightBoxContentElement.style.width = width;
-            lightBoxContentElement.style.height = height;
+            lightBoxContentElement.style.width = withDefaultPXUnit(width);
+            lightBoxContentElement.style.height = withDefaultPXUnit(height);
 
             var containerWidth = lightBoxElement.clientWidth,
                 containerHeight = lightBoxElement.clientHeight;
@@ -202,7 +206,7 @@ module.exports = (function () {
                 contentHeight = outerHeight(lightBoxContentElement);
 
             var horMargin = contentWidth - lightBoxContentElement.offsetWidth,
-            vertMargin = contentHeight - lightBoxContentElement.offsetHeight;
+                vertMargin = contentHeight - lightBoxContentElement.offsetHeight;
 
             var horDiff = containerWidth - contentWidth,
                 vertDiff = containerHeight - contentHeight;
@@ -226,7 +230,7 @@ module.exports = (function () {
 
             width += parseInt(style.marginLeft) + parseInt(style.marginRight);
             return width;
-          }
+        }
 
         function outerHeight(el) {
             var height = el.offsetHeight;
@@ -245,7 +249,7 @@ module.exports = (function () {
             if (global.window.innerWidth > outerWidth(bodyElement)) {
                 var bodyPad = parseInt((getComputedStyle(bodyElement)['paddingRight'] || 0), 10);
                 bodyElement.style.overflow = 'hidden;';
-                bodyElement.style.paddingRight = bodyPad + this.measureScrollbar();
+                bodyElement.style.paddingRight = withDefaultPXUnit(bodyPad + this.measureScrollbar());
             }
         }).bind(this);
 

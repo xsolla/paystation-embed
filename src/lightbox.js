@@ -147,7 +147,7 @@ module.exports = (function () {
         };
 
         function withDefaultPXUnit(value) {
-            var isStringWithoutUnit = typeof value === 'string' && String(Number.parseFloat(value)).length === value.length;
+            var isStringWithoutUnit = typeof value === 'string' && String(parseFloat(value)).length === value.length;
             if (isStringWithoutUnit) {
                 return value + 'px';
             }

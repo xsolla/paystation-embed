@@ -1,14 +1,21 @@
-var $ = require('jquery');
-var _ = require('lodash');
+var Helpers = require('./helpers');
 var Exception = require('./exception');
 var LightBox = require('./lightbox');
 var ChildWindow = require('./childwindow');
 var Device = require('./device');
 
 module.exports = (function () {
+    function ready(fn) {
+        if (document.readyState != 'loading'){
+          fn();
+        } else {
+          document.addEventListener('DOMContentLoaded', fn);
+        }
+    }
+
     function App() {
-        this.config = _.extend({}, DEFAULT_CONFIG);
-        this.eventObject = $({});
+        this.config = Object.assign({}, DEFAULT_CONFIG);
+        this.eventObject = Helpers.addEventObject(this);
         this.isInitiated = false;
         this.postMessage = null;
     }
@@ -38,12 +45,12 @@ module.exports = (function () {
         host: 'secure.xsolla.com'
     };
     var EVENT_NAMESPACE = '.xpaystation-widget';
-    var ATTR_PREFIX = 'data-xpaystation-widget';
+    var ATTR_PREFIX = 'data-xpaystation-widget-open';
 
     /** Private Members **/
     App.prototype.config = {};
     App.prototype.isInitiated = false;
-    App.prototype.eventObject = $({});
+    App.prototype.eventObject = Helpers.addEventObject(this);
 
     App.prototype.getPaystationUrl = function () {
         var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
@@ -51,21 +58,21 @@ module.exports = (function () {
     };
 
     App.prototype.checkConfig = function () {
-        if (_.isEmpty(this.config.access_token) && _.isEmpty(this.config.access_data)) {
+        if (Helpers.isEmpty(this.config.access_token) && Helpers.isEmpty(this.config.access_data)) {
             this.throwError('No access token given');
         }
 
-        if (!_.isEmpty(this.config.access_data) && !_.isPlainObject(this.config.access_data)) {
+        if (!Helpers.isEmpty(this.config.access_data) && typeof this.config.access_data !== 'object') {
             this.throwError('Invalid access data format');
         }
 
-        if (_.isEmpty(this.config.host)) {
+        if (Helpers.isEmpty(this.config.host)) {
             this.throwError('Invalid host');
         }
     };
 
     App.prototype.checkApp = function () {
-        if (_.isUndefined(this.isInitiated)) {
+        if (this.isInitiated === undefined) {
             this.throwError('Initialize widget before opening');
         }
     };
@@ -75,25 +82,47 @@ module.exports = (function () {
     };
 
     App.prototype.triggerEvent = function () {
-        this.eventObject.trigger.apply(this.eventObject, arguments);
+        [].forEach.call(arguments, (function (eventName) {
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent(eventName, true, false);
+            document.dispatchEvent(event);
+        }).bind(this));
     };
 
     /**
      * Initialize widget with options
      * @param options
      */
-    App.prototype.init = function (options) {
-        this.isInitiated = true;
-        this.config = _.extend({}, DEFAULT_CONFIG, options);
+    App.prototype.init = function(options) {
+        function initialize(options) {
+            this.isInitiated = true;
+            this.config = Object.assign({}, DEFAULT_CONFIG, options);
 
-        var bodyElement = $(global.document.body);
-        bodyElement.off(EVENT_NAMESPACE);
-        bodyElement.on('click' + EVENT_NAMESPACE, '[' + ATTR_PREFIX + '-open]', _.bind(function () {
-            this.open();
-        }, this));
+            var bodyElement = global.document.body;
+            var clickEventName = 'click' + EVENT_NAMESPACE;
 
-        this.triggerEvent(App.eventTypes.INIT);
-    };
+            var handleClickEvent = (function(event) {
+                var targetElement = document.querySelector('[' + ATTR_PREFIX + ']');
+                if (event.sourceEvent.target === targetElement) {
+                    this.open.call(this, targetElement);
+                }
+            }).bind(this);
+
+            bodyElement.removeEventListener(clickEventName, handleClickEvent);
+
+            var clickEvent = document.createEvent('Event');
+            clickEvent.initEvent(clickEventName, false, true);
+
+            bodyElement.addEventListener('click', (function(event) {
+                clickEvent.sourceEvent = event;
+                bodyElement.dispatchEvent(clickEvent);
+            }).bind(this), false);
+
+            bodyElement.addEventListener(clickEventName, handleClickEvent);
+            this.triggerEvent(App.eventTypes.INIT);
+        }
+        ready(initialize.bind(this, options));
+    }
 
     /**
      * Open payment interface (PayStation)
@@ -102,7 +131,7 @@ module.exports = (function () {
         this.checkConfig();
         this.checkApp();
 
-        var triggerSplitStatus = _.bind(function (data) {
+        var triggerSplitStatus = (function (data) {
             switch (((data || {}).paymentInfo || {}).status) {
                 case 'invoice':
                     this.triggerEvent(App.eventTypes.STATUS_INVOICE, data);
@@ -117,7 +146,7 @@ module.exports = (function () {
                     this.triggerEvent(App.eventTypes.STATUS_DONE, data);
                     break;
             }
-        }, this);
+        }).bind(this);
 
         var query = {};
         if (this.config.access_token) {
@@ -126,46 +155,57 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
-        var url = this.getPaystationUrl() + $.param(query);
+
+
+        var url = this.getPaystationUrl() + Helpers.param(query);
+        var that = this;
+
+        function handleStatus(event) {
+            var statusData = event.detail;
+            that.triggerEvent(App.eventTypes.STATUS, statusData);
+            triggerSplitStatus(statusData);
+        }
 
         this.postMessage = null;
         if ((new Device).isMobile()) {
             var childWindow = new ChildWindow;
-            childWindow.on('open', _.bind(function () {
-                this.postMessage = childWindow.getPostMessage();
-                this.triggerEvent(App.eventTypes.OPEN);
-                this.triggerEvent(App.eventTypes.OPEN_WINDOW);
-            }, this));
-            childWindow.on('load', _.bind(function () {
-                this.triggerEvent(App.eventTypes.LOAD);
-            }, this));
-            childWindow.on('close', _.bind(function () {
-                this.triggerEvent(App.eventTypes.CLOSE);
-                this.triggerEvent(App.eventTypes.CLOSE_WINDOW);
-            }, this));
-            childWindow.on('status', _.bind(function (event, statusData) {
-                this.triggerEvent(App.eventTypes.STATUS, statusData);
-                triggerSplitStatus(statusData);
-            }, this));
+            childWindow.on('open', function handleOpen() {
+                that.postMessage = childWindow.getPostMessage();
+                that.triggerEvent(App.eventTypes.OPEN);
+                that.triggerEvent(App.eventTypes.OPEN_WINDOW);
+                childWindow.off('open', handleOpen);
+            });
+            childWindow.on('load', function handleLoad() {
+                that.triggerEvent(App.eventTypes.LOAD);
+                childWindow.off('load', handleLoad);
+            });
+            childWindow.on('close', function handleClose() {
+                that.triggerEvent(App.eventTypes.CLOSE);
+                that.triggerEvent(App.eventTypes.CLOSE_WINDOW);
+                childWindow.off('status', handleStatus);
+                childWindow.off('close', handleClose);
+            });
+            childWindow.on('status', handleStatus);
             childWindow.open(url, this.config.childWindow);
         } else {
             var lightBox = new LightBox;
-            lightBox.on('open', _.bind(function () {
-                this.postMessage = lightBox.getPostMessage();
-                this.triggerEvent(App.eventTypes.OPEN);
-                this.triggerEvent(App.eventTypes.OPEN_LIGHTBOX);
-            }, this));
-            lightBox.on('load', _.bind(function () {
-                this.triggerEvent(App.eventTypes.LOAD);
-            }, this));
-            lightBox.on('close', _.bind(function () {
-                this.triggerEvent(App.eventTypes.CLOSE);
-                this.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
-            }, this));
-            lightBox.on('status', _.bind(function (event, statusData) {
-                this.triggerEvent(App.eventTypes.STATUS, statusData);
-                triggerSplitStatus(statusData);
-            }, this));
+            lightBox.on('open', function handleOpen() {
+                that.postMessage = lightBox.getPostMessage();
+                that.triggerEvent(App.eventTypes.OPEN);
+                that.triggerEvent(App.eventTypes.OPEN_LIGHTBOX);
+                lightBox.off('open', handleOpen);
+            });
+            lightBox.on('load', function handleLoad() {
+                that.triggerEvent(App.eventTypes.LOAD);
+                lightBox.off('load', handleLoad);
+            });
+            lightBox.on('close', function handleClose() {
+                that.triggerEvent(App.eventTypes.CLOSE);
+                that.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
+                lightBox.off('status', handleStatus);
+                lightBox.off('close', handleClose);
+            });
+            lightBox.on('status', handleStatus);
             lightBox.openFrame(url, this.config.lightbox);
         }
     };
@@ -175,12 +215,12 @@ module.exports = (function () {
      * @param event One or more space-separated event types (init, open, load, close, status, status-invoice, status-delivering, status-troubled, status-done)
      * @param handler A function to execute when the event is triggered
      */
-    App.prototype.on = function (event, handler) {
-        if (!_.isFunction(handler)) {
+    App.prototype.on = function (event, handler, options) {
+        if (typeof handler !== 'function') {
             return;
         }
 
-        this.eventObject.on(event, handler);
+        this.eventObject.on(event, handler, options);
     };
 
     /**
@@ -188,8 +228,8 @@ module.exports = (function () {
      * @param event One or more space-separated event types
      * @param handler A handler function previously attached for the event(s)
      */
-    App.prototype.off = function (event, handler) {
-        this.eventObject.off(event, handler);
+    App.prototype.off = function (event, handler, options) {
+        this.eventObject.off(event, handler, options);
     };
 
     /**

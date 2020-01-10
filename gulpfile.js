@@ -23,8 +23,6 @@ function setupBrowserify(watch) {
     };
     var bundler = browserify('./src/main.js', bundleOptions);
     bundler.require('./src/main.js', {entry: true, expose: 'main'});
-    bundler.require('./bower_components/jquery/dist/jquery.js', {expose: 'jquery'});
-    bundler.require('./bower_components/lodash/lodash.js', {expose: 'lodash'});
     bundler.require('./bower_components/bowser/src/bowser.js', {expose: 'bowser'});
     bundler.transform({
         outputStyle: 'compressed',

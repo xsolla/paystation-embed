@@ -1,18 +1,21 @@
-var $ = require('jquery');
-var _ = require('lodash');
+var Helpers = require('./helpers');
 
 module.exports = (function () {
+    function wrapEventInNamespace(eventName) {
+        return PostMessage._NAMESPACE + '_' + eventName;
+    }
+
     function PostMessage(window) {
-        this.eventObject = $({});
+        this.eventObject = Helpers.addEventObject(this, wrapEventInNamespace);
         this.linkedWindow = window;
 
-        global.window.addEventListener && global.window.addEventListener("message", _.bind(function (event) {
+        global.window.addEventListener && global.window.addEventListener("message", (function (event) {
             if (event.source !== this.linkedWindow) {
                 return;
             }
 
             var message = {};
-            if (_.isString(event.data) && !_.isUndefined(global.JSON)) {
+            if (typeof event.data === 'string' && global.JSON !== undefined) {
                 try {
                     message = global.JSON.parse(event.data);
                 } catch (e) {
@@ -22,7 +25,7 @@ module.exports = (function () {
             if (message.command) {
                 this.eventObject.trigger(message.command, message.data);
             }
-        }, this));
+        }).bind(this));
     }
 
     /** Private Members **/
@@ -31,15 +34,15 @@ module.exports = (function () {
 
     /** Public Members **/
     PostMessage.prototype.send = function(command, data, targetOrigin) {
-        if (_.isUndefined(data)) {
+        if (data === undefined) {
             data = {};
         }
 
-        if (_.isUndefined(targetOrigin)) {
+        if (targetOrigin === undefined) {
             targetOrigin = '*';
         }
 
-        if (!this.linkedWindow || _.isUndefined(this.linkedWindow.postMessage) || _.isUndefined(global.window.JSON)) {
+        if (!this.linkedWindow || this.linkedWindow.postMessage === undefined || global.window.JSON === undefined) {
             return false;
         }
 
@@ -51,13 +54,16 @@ module.exports = (function () {
         return true;
     };
 
-    PostMessage.prototype.on = function () {
-        this.eventObject.on.apply(this.eventObject, arguments);
+    PostMessage.prototype.on = function (event, handle, options) {
+        this.eventObject.on(event, handle, options);
     };
 
-    PostMessage.prototype.off = function () {
-        this.eventObject.off.apply(this.eventObject, arguments);
+    PostMessage.prototype.off = function (event, handle, options) {
+        this.eventObject.off(event, handle, options);
     };
+
+    PostMessage._NAMESPACE = 'POST_MESSAGE';
+
 
     return PostMessage;
 })();

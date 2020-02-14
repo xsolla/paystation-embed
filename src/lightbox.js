@@ -142,8 +142,8 @@ module.exports = (function () {
         var lightBoxSpinnerElement = lightBoxElement.querySelector('.' + CLASS_PREFIX + '-spinner');
 
         var psDimensions = {
-            width: '0px',
-            height: '0px'
+            width: withDefaultPXUnit(MIN_PS_DIMENSIONS.width),
+            height: withDefaultPXUnit(MIN_PS_DIMENSIONS.height)
         };
 
         function withDefaultPXUnit(value) {
@@ -228,6 +228,10 @@ module.exports = (function () {
             }
         };
 
+        if (options.width && options.height) {
+            lightBoxResize = Helpers.once(lightBoxResize.bind(this));
+        }
+
         function outerWidth(el) {
             var width = el.offsetWidth;
             var style = getComputedStyle(el);
@@ -275,8 +279,9 @@ module.exports = (function () {
 
         var loadTimer;
         lightBoxIframeElement.addEventListener('load', function handleLoad(event) {
-            var timeout = !options.width || !options.height ? 30000 : 1000; //30000 if psDimensions will not arrive
+            var timeout = !(options.width && options.height) ? (options.resizeTimeout || 30000) : 1000; // 30000 if psDimensions will not arrive and custom timeout is not provided
             loadTimer = global.setTimeout(function () {
+                lightBoxResize();
                 showContent();
             }, timeout);
             lightBoxIframeElement.removeEventListener('load', handleLoad);
@@ -289,6 +294,7 @@ module.exports = (function () {
         this.message = new PostMessage(iframeWindow);
         if (options.width && options.height) {
             this.message.on('dimensions', (function () {
+                lightBoxResize();
                 showContent();
             }));
         } else {
@@ -333,9 +339,6 @@ module.exports = (function () {
             that.off('close', handleClose);
         });
 
-        if (options.width && options.height) {
-            lightBoxResize();
-        }
         showSpinner();
         hideScrollbar();
         this.triggerEvent('open');

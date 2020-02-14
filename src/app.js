@@ -6,7 +6,7 @@ var Device = require('./device');
 
 module.exports = (function () {
     function ready(fn) {
-        if (document.readyState != 'loading'){
+        if (document.readyState !== 'loading'){
           fn();
         } else {
           document.addEventListener('DOMContentLoaded', fn);
@@ -44,6 +44,7 @@ module.exports = (function () {
         childWindow: {},
         host: 'secure.xsolla.com'
     };
+    var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
     var ATTR_PREFIX = 'data-xpaystation-widget-open';
 
@@ -52,14 +53,27 @@ module.exports = (function () {
     App.prototype.isInitiated = false;
     App.prototype.eventObject = Helpers.addEventObject(this);
 
-    App.prototype.getPaystationUrl = function () {
-        var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
-        return this.config.sandbox ? SANDBOX_PAYSTATION_URL : 'https://' + this.config.host + '/paystation2/?';
+    App.prototype.getPaymentUrl = function () {
+        if (this.config.payment_url) {
+            return this.config.payment_url;
+        }
+
+        const query = {};
+        if (this.config.access_token) {
+            query.access_token = this.config.access_token;
+        } else {
+            query.access_data = JSON.stringify(this.config.access_data);
+        }
+
+        const urlWithoutQueryParams = this.config.sandbox ?
+            SANDBOX_PAYSTATION_URL :
+            'https://' + this.config.host + '/paystation2/?';
+        return urlWithoutQueryParams + Helpers.param(query);
     };
 
     App.prototype.checkConfig = function () {
-        if (Helpers.isEmpty(this.config.access_token) && Helpers.isEmpty(this.config.access_data)) {
-            this.throwError('No access token given');
+        if (Helpers.isEmpty(this.config.access_token) && Helpers.isEmpty(this.config.access_data) && Helpers.isEmpty(this.config.payment_url)) {
+            this.throwError('No access token or access data or payment URL given');
         }
 
         if (!Helpers.isEmpty(this.config.access_data) && typeof this.config.access_data !== 'object') {
@@ -148,16 +162,7 @@ module.exports = (function () {
             }
         }).bind(this);
 
-        var query = {};
-        if (this.config.access_token) {
-            query.access_token = this.config.access_token;
-        } else {
-            query.access_data = JSON.stringify(this.config.access_data);
-        }
-
-
-
-        var url = this.getPaystationUrl() + Helpers.param(query);
+        var url = this.getPaymentUrl();
         var that = this;
 
         function handleStatus(event) {

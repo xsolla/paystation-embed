@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 - 2020-04-17
+
+- [feature] Add ability to pass custom payment URL
+
 ## 1.1.0 - 2019-12-12
 
 - [feature] Remove lodash and JQuery from project

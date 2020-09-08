@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 - 2020-09-08
+
+- [fix] Prevent layout shift when PayStation is opening in Chrome
+
 ## 1.2.0 - 2020-04-17
 
 - [feature] Add ability to pass custom payment URL

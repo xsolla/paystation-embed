@@ -161,6 +161,8 @@ module.exports = (function () {
 
         lightBoxContentElement.style.backgroundColor = options.contentBackground;
         lightBoxContentElement.style.margin = withDefaultPXUnit(options.contentMargin);
+        lightBoxContentElement.style.width = options.width ? withDefaultPXUnit(options.width) : 'auto';
+        lightBoxContentElement.style.height = options.height ? withDefaultPXUnit(options.height) : 'auto';
 
         if (options.spinnerColor) {
             lightBoxSpinnerElement.querySelector('path').style.fill = options.spinnerColor;

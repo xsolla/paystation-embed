@@ -69,8 +69,8 @@ module.exports = (function () {
     }
 
     /** Private Members **/
-    LightBox.prototype.triggerEvent = function () {
-        this.eventObject.trigger.apply(this.eventObject, arguments);
+    LightBox.prototype.triggerEvent = function (eventName, data) {
+        this.eventObject.trigger(eventName, data);
     };
 
     LightBox.prototype.measureScrollbar = function () { // thx walsh: https://davidwalsh.name/detect-scrollbar-width

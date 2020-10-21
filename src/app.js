@@ -95,12 +95,8 @@ module.exports = (function () {
         throw new Exception(message);
     };
 
-    App.prototype.triggerEvent = function () {
-        [].forEach.call(arguments, (function (eventName) {
-            var event = document.createEvent('HTMLEvents');
-            event.initEvent(eventName, true, false);
-            document.dispatchEvent(event);
-        }).bind(this));
+    App.prototype.triggerEvent = function (eventName, data) {
+        this.eventObject.trigger(eventName, data);
     };
 
     /**
@@ -225,7 +221,11 @@ module.exports = (function () {
             return;
         }
 
-        this.eventObject.on(event, handler, options);
+        const handlerDecorator = function(event) {
+            handler(event, event.detail);
+        }
+
+        this.eventObject.on(event, handlerDecorator, options);
     };
 
     /**

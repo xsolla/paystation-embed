@@ -30,7 +30,7 @@
         var s = document.createElement('script');
         s.type = "text/javascript";
         s.async = true;
-        s.src = "widget.js";
+        s.src = "../dist/widget.js";
         s.addEventListener('load', function (e) {
             XPayStationWidget.on(XPayStationWidget.eventTypes.INIT, function () {
                 console.log('init event', arguments);

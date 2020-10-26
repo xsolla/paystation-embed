@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 - 2020-10-21
+
+- [fix] Fixed adding custom event
+- [feature] Added decorator for handler method `XPayStationWidget.on` 
+
 ## 1.2.1 - 2020-09-08
 
 - [fix] Prevent layout shift when PayStation is opening in Chrome

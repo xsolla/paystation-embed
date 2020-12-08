@@ -43,7 +43,8 @@ module.exports = (function () {
         sandbox: false,
         lightbox: {},
         childWindow: {},
-        host: 'secure.xsolla.com'
+        host: 'secure.xsolla.com',
+        iframeOnly: false
     };
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
@@ -190,7 +191,7 @@ module.exports = (function () {
         }
 
         this.postMessage = null;
-        if ((new Device).isMobile()) {
+        if ((new Device).isMobile() && !this.config.iframeOnly) {
             var childWindow = new ChildWindow;
             childWindow.on('open', function handleOpen() {
                 that.postMessage = childWindow.getPostMessage();
@@ -213,7 +214,7 @@ module.exports = (function () {
             childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             childWindow.open(url, this.config.childWindow);
         } else {
-            var lightBox = new LightBox;
+            var lightBox = new LightBox((new Device).isMobile() && this.config.iframeOnly);
             lightBox.on('open', function handleOpen() {
                 that.postMessage = lightBox.getPostMessage();
                 that.triggerEvent(App.eventTypes.OPEN);

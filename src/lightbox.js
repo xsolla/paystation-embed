@@ -3,22 +3,19 @@ var Helpers = require('./helpers');
 var PostMessage = require('./postmessage');
 
 module.exports = (function () {
-    function LightBox() {
+    function LightBox(isMobile) {
         require('./styles/lightbox.scss');
         this.eventObject = Helpers.addEventObject(this, wrapEventInNamespace);
-        this.options = DEFAULT_OPTIONS;
+        this.options = isMobile ? DEFAULT_OPTIONS_MOBILE : DEFAULT_OPTIONS;
         this.message = null;
     }
 
     var CLASS_PREFIX = 'xpaystation-widget-lightbox';
-    var DEFAULT_OPTIONS = {
-        width: null,
-        height: '100%',
+    var COMMON_OPTIONS = {
         zIndex: 1000,
         overlayOpacity: '.6',
         overlayBackground: '#000000',
         contentBackground: '#ffffff',
-        contentMargin: '10px',
         closeByKeyboard: true,
         closeByClick: true,
         modal: false,
@@ -27,6 +24,16 @@ module.exports = (function () {
         spinnerUrl: null,
         spinnerRotationPeriod: 0
     };
+    var DEFAULT_OPTIONS = Object.assign({}, COMMON_OPTIONS, {
+        width: null,
+        height: '100%',
+        contentMargin: '10px'
+    });
+    var DEFAULT_OPTIONS_MOBILE = Object.assign({}, COMMON_OPTIONS, {
+        width: '100%',
+        height: '100%', 
+        contentMargin: '0px'
+    });
 
     var SPINNERS = {
         xsolla: require('./spinners/xsolla.svg'),

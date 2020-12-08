@@ -62,6 +62,9 @@ module.exports = (function () {
                 that.message.off();
                 that.off('close', handleClose);
             });
+            that.message.on('user-country', function (event) {
+                that.triggerEvent('user-country', event.detail);
+            });
         };
 
         switch (options.target) {

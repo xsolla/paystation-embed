@@ -129,6 +129,7 @@ You can refer to the widget object, using the following methods:
 * **status-delivering** — Event when the user was moved on the status page, payment was completed, and we’re sending payment notification
 * **status-done** — Event when the user was moved on the status page, and the payment was completed successfully
 * **status-troubled** — Event when the user was moved on the status page, but the payment failed
+* **user-country** — Event when PayStation have determine user country
 
 You can access list of event using XPayStationWidget.eventTypes object.
 

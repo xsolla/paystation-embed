@@ -33,7 +33,8 @@ module.exports = (function () {
         STATUS_INVOICE: 'status-invoice',
         STATUS_DELIVERING: 'status-delivering',
         STATUS_TROUBLED: 'status-troubled',
-        STATUS_DONE: 'status-done'
+        STATUS_DONE: 'status-done',
+        USER_COUNTRY: 'user-country'
     };
 
     var DEFAULT_CONFIG = {
@@ -95,8 +96,22 @@ module.exports = (function () {
         throw new Exception(message);
     };
 
-    App.prototype.triggerEvent = function (eventName, data) {
-        this.eventObject.trigger(eventName, data);
+    App.prototype.triggerEvent = function () {
+        [].forEach.call(arguments, (function (eventName) {
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent(eventName, true, false);
+            document.dispatchEvent(event);
+        }).bind(this));
+    };
+
+    App.prototype.triggerCustomEvent = function (eventName, data) {
+        try {
+            var event = new CustomEvent(eventName, {detail: data}); // Not working in IE
+        } catch(e) {
+            var event = document.createEvent('CustomEvent');
+            event.initCustomEvent(eventName, true, true, data);
+        }
+        document.dispatchEvent(event);
     };
 
     /**
@@ -167,6 +182,13 @@ module.exports = (function () {
             triggerSplitStatus(statusData);
         }
 
+        function handleUserLocale(event) {
+            var userCountry = {
+                user_country: event.detail.user_country
+            };
+            that.triggerCustomEvent(App.eventTypes.USER_COUNTRY, userCountry);
+        }
+
         this.postMessage = null;
         if ((new Device).isMobile()) {
             var childWindow = new ChildWindow;
@@ -184,9 +206,11 @@ module.exports = (function () {
                 that.triggerEvent(App.eventTypes.CLOSE);
                 that.triggerEvent(App.eventTypes.CLOSE_WINDOW);
                 childWindow.off('status', handleStatus);
+                childWindow.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
                 childWindow.off('close', handleClose);
             });
             childWindow.on('status', handleStatus);
+            childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             childWindow.open(url, this.config.childWindow);
         } else {
             var lightBox = new LightBox;
@@ -204,9 +228,11 @@ module.exports = (function () {
                 that.triggerEvent(App.eventTypes.CLOSE);
                 that.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
                 lightBox.off('status', handleStatus);
+                lightBox.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
                 lightBox.off('close', handleClose);
             });
             lightBox.on('status', handleStatus);
+            lightBox.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             lightBox.openFrame(url, this.config.lightbox);
         }
     };
@@ -221,11 +247,7 @@ module.exports = (function () {
             return;
         }
 
-        const handlerDecorator = function(event) {
-            handler(event, event.detail);
-        }
-
-        this.eventObject.on(event, handlerDecorator, options);
+        this.eventObject.on(event, handler, options);
     };
 
     /**

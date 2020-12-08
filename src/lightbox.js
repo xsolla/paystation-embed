@@ -69,8 +69,8 @@ module.exports = (function () {
     }
 
     /** Private Members **/
-    LightBox.prototype.triggerEvent = function (eventName, data) {
-        this.eventObject.trigger(eventName, data);
+    LightBox.prototype.triggerEvent = function () {
+        this.eventObject.trigger.apply(this.eventObject, arguments);
     };
 
     LightBox.prototype.measureScrollbar = function () { // thx walsh: https://davidwalsh.name/detect-scrollbar-width
@@ -320,6 +320,9 @@ module.exports = (function () {
         }).bind(this));
         this.message.on('status', (function (event) {
             this.triggerEvent('status', event.detail);
+        }).bind(this));
+        this.message.on('user-country', (function (event) {
+            this.triggerEvent('user-country', event.detail);
         }).bind(this));
 
         // Resize

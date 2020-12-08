@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3 - 2020-12-08
+
+- [feature] Add new event `USER_COUNTRY` 
+
 ## 1.2.2 - 2020-10-21
 
 - [fix] Fixed adding custom event

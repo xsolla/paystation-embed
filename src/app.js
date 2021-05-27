@@ -43,10 +43,11 @@ module.exports = (function () {
         sandbox: false,
         lightbox: {},
         childWindow: {},
-        host: 'secure.xsolla.com',
-        iframeOnly: false
+        host: 'store.xsolla.com',
+        iframeOnly: false,
+        project_id: null
     };
-    var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
+    var SANDBOX_PAYSTATION_URL = 'https://store.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
     var ATTR_PREFIX = 'data-xpaystation-widget-open';
 
@@ -62,14 +63,12 @@ module.exports = (function () {
 
         const query = {};
         if (this.config.access_token) {
-            query.access_token = this.config.access_token;
-        } else {
-            query.access_data = JSON.stringify(this.config.access_data);
+            query.auth = this.config.access_token;
         }
 
-        const urlWithoutQueryParams = this.config.sandbox ?
-            SANDBOX_PAYSTATION_URL :
-            'https://' + this.config.host + '/paystation2/?';
+        query.project_id = this.config.project_id;
+
+        const urlWithoutQueryParams = 'https://' + this.config.host + '/pages/cart?';
         return urlWithoutQueryParams + Helpers.param(query);
     };
 

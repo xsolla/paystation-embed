@@ -44,7 +44,10 @@ module.exports = (function () {
         lightbox: {},
         childWindow: {},
         host: 'secure.xsolla.com',
-        iframeOnly: false
+        iframeOnly: false,
+        project_id: null,
+        is_cart: false,
+        store_host: 'store.xsolla.com',
     };
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
@@ -60,17 +63,36 @@ module.exports = (function () {
             return this.config.payment_url;
         }
 
-        const query = {};
-        if (this.config.access_token) {
-            query.access_token = this.config.access_token;
+        if (this.config.is_cart) {
+            return getNewUrl(this.config);
         } else {
-            query.access_data = JSON.stringify(this.config.access_data);
+            return getOldUrl(this.config);
+        }
+        
+        function getOldUrl(config) {
+            const query = {};
+            if (config.access_token) {
+                query.access_token = config.access_token;
+            } else {
+                query.access_data = JSON.stringify(config.access_data);
+            }
+
+            const urlWithoutQueryParams = config.sandbox ?
+                SANDBOX_PAYSTATION_URL :
+                'https://' + config.host + '/paystation2/?';
+            return urlWithoutQueryParams + Helpers.param(query);
         }
 
-        const urlWithoutQueryParams = this.config.sandbox ?
-            SANDBOX_PAYSTATION_URL :
-            'https://' + this.config.host + '/paystation2/?';
-        return urlWithoutQueryParams + Helpers.param(query);
+        function getNewUrl(config) {
+            const query = {};
+            if (config.access_token) {
+                query.auth = config.access_token;
+            }
+            query.project_id = config.project_id;
+
+            const urlWithoutQueryParams = 'https://' + config.store_host + '/pages/cart?';
+            return urlWithoutQueryParams + Helpers.param(query);
+        }
     };
 
     App.prototype.checkConfig = function () {

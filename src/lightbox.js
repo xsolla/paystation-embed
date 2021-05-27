@@ -19,14 +19,14 @@ module.exports = (function () {
         closeByKeyboard: true,
         closeByClick: true,
         modal: false,
-        spinner: 'xsolla',
+        spinner: 'round',
         spinnerColor: null,
         spinnerUrl: null,
         spinnerRotationPeriod: 0
     };
     var DEFAULT_OPTIONS = Object.assign({}, COMMON_OPTIONS, {
         width: null,
-        height: '100%',
+        height: '780px',
         contentMargin: '10px'
     });
     var DEFAULT_OPTIONS_MOBILE = Object.assign({}, COMMON_OPTIONS, {

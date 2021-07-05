@@ -40,6 +40,7 @@ module.exports = (function () {
     var DEFAULT_CONFIG = {
         access_token: null,
         access_data: null,
+        auth: null,
         sandbox: false,
         lightbox: {},
         childWindow: {},
@@ -88,6 +89,9 @@ module.exports = (function () {
             if (config.access_token) {
                 query.auth = config.access_token;
             }
+            if (config.auth) {
+                query.auth = config.auth;
+            }
             query.project_id = config.project_id;
 
             const urlWithoutQueryParams = 'https://' + config.store_host + '/pages/cart?';
@@ -96,8 +100,19 @@ module.exports = (function () {
     };
 
     App.prototype.checkConfig = function () {
-        if (Helpers.isEmpty(this.config.access_token) && Helpers.isEmpty(this.config.access_data) && Helpers.isEmpty(this.config.payment_url)) {
+        if (!this.config.is_cart &&
+            Helpers.isEmpty(this.config.access_token) &&
+            Helpers.isEmpty(this.config.access_data) &&
+            Helpers.isEmpty(this.config.payment_url)) {
             this.throwError('No access token or access data or payment URL given');
+        }
+
+        if (this.config.is_cart &&
+            Helpers.isEmpty(this.config.access_token) &&
+            Helpers.isEmpty(this.config.auth) &&
+            Helpers.isEmpty(this.config.access_data) &&
+            Helpers.isEmpty(this.config.payment_url)) {
+            this.throwError('No auth token or access data or payment URL given');
         }
 
         if (!Helpers.isEmpty(this.config.access_data) && typeof this.config.access_data !== 'object') {

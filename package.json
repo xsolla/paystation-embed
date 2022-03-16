@@ -1,6 +1,6 @@
 {
   "name": "xsolla-paystation-widget",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "PayStation 3 Integration Widget",
   "scripts": {
     "build": "gulp build",

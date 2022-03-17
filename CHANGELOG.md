@@ -1,4 +1,9 @@
 # Changelog
+## 1.2.5
+- [fix] Fixed documentation
+
+## 1.2.4 - 2021-11-22
+- [fix] Fixed incorrect format of the paymentInfo
 
 ## 1.2.3 - 2020-12-07
 

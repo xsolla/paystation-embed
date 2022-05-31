@@ -263,11 +263,9 @@ module.exports = (function () {
                 return [key, getComputedStyle(bodyElement)[key]];
             }));
 
-            if (global.window.innerWidth > outerWidth(bodyElement)) {
-                var bodyPad = parseInt((getComputedStyle(bodyElement)['paddingRight'] || 0), 10);
-                bodyElement.style.overflow = 'hidden;';
-                bodyElement.style.paddingRight = withDefaultPXUnit(bodyPad + this.measureScrollbar());
-            }
+            var bodyPad = parseInt((getComputedStyle(bodyElement)['paddingRight'] || 0), 10);
+            bodyElement.style.overflow = 'hidden';
+            bodyElement.style.paddingRight = withDefaultPXUnit(bodyPad + this.measureScrollbar());
         }).bind(this);
 
         var resetScrollbar = function () {

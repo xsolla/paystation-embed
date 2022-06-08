@@ -1,4 +1,7 @@
 # Changelog
+## 1.2.6
+- [fix] hideScrollbar function fix
+
 ## 1.2.5
 - [fix] Fixed documentation
 

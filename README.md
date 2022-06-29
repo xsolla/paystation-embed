@@ -160,3 +160,13 @@ HTML example:
 ``` html
 <button data-xpaystation-widget-open>Buy Credits</button>
 ```
+
+### Troubleshooting
+
+Browsers are sensitive to anything that could affect user security.
+You should work carefully with [user trusted events](https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted), such as click handling.
+If a payment method opens in a new browser tab, you must ensure there is a connection between this functionality and a trusted event.
+If the conditions for opening a new tab depend on asynchronous code, the event won’t be trusted and result in an error.
+Refactoring the callback code that opens a new tab in synchronous style can resolve this problem.
+
+Additional code that runs on a widget button click may also cause similar problems.

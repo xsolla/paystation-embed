@@ -14,7 +14,7 @@ module.exports = (function () {
         return instance;
     };
 
-    return Object.assign(Helpers.zipObject(['init', 'open', 'on', 'off', 'sendMessage', 'onMessage'].map(function (methodName) {
+    return Object.assign(Helpers.zipObject(['init', 'open', 'close', 'on', 'off', 'sendMessage', 'onMessage'].map(function (methodName) {
         var app = getInstance();
         return [methodName, function () {
             return app[methodName].apply(app, arguments);

@@ -18,6 +18,7 @@ module.exports = (function () {
         this.eventObject = Helpers.addEventObject(this);
         this.isInitiated = false;
         this.postMessage = null;
+        this.childWindow = null;
     }
 
     App.eventTypes = {
@@ -217,6 +218,7 @@ module.exports = (function () {
             childWindow.on('status', handleStatus);
             childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             childWindow.open(url, this.config.childWindow);
+            that.childWindow = childWindow;
         } else {
             var lightBox = new LightBox((new Device).isMobile() && this.config.iframeOnly);
             lightBox.on('open', function handleOpen() {
@@ -239,7 +241,16 @@ module.exports = (function () {
             lightBox.on('status', handleStatus);
             lightBox.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             lightBox.openFrame(url, this.config.lightbox);
+            that.childWindow = lightBox;
         }
+    };
+
+
+    /**
+     * Close payment interface (PayStation)
+     */
+    App.prototype.close = function () {
+        this.childWindow.close();
     };
 
     /**

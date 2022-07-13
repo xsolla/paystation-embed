@@ -1,4 +1,7 @@
 # Changelog
+## 1.2.7
+- [feature] Added close function
+
 ## 1.2.6
 - [fix] hideScrollbar function fix
 

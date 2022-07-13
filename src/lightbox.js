@@ -360,6 +360,10 @@ module.exports = (function () {
         }
     };
 
+    LightBox.prototype.close = function () {
+        this.closeFrame();
+    };
+
     LightBox.prototype.on = function () {
         this.eventObject.on.apply(this.eventObject, arguments);
     };

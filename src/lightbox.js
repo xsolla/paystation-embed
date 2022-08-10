@@ -323,6 +323,9 @@ module.exports = (function () {
         this.message.on('widget-close', (function () {
             this.closeFrame();
         }).bind(this));
+        this.message.on('close', (function () {
+            this.closeFrame();
+        }).bind(this));
         this.message.on('status', (function (event) {
             this.triggerEvent('status', event.detail);
         }).bind(this));

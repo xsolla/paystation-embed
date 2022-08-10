@@ -1,4 +1,8 @@
 # Changelog
+
+## 1.2.8
+- [fix] Fix iframe closing case
+
 ## 1.2.7
 - [feature] Added close function
 

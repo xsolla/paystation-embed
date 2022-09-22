@@ -1,14 +1,14 @@
-# Xsolla PayStation Widget
+# Xsolla Pay Station Widget
 
 ## Integration Guide
 
-Xsolla team created a script to simplify the integration of PayStation into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/v2/pay-station/#api_payment_ui).
+Xsolla team created a script to simplify the integration of Pay Station into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/v2/pay-station/#api_payment_ui).
 
 [See Demo](http://livedemo.xsolla.com/paystation/)
 
 Features:
 * the most appropriate interface depending on the type of device
-* tracking of events happening with PayStation
+* tracking of events happening with Pay Station
 * compliant with the AMD and CommonJS specification for defining modules
 
 ### Getting the code
@@ -85,9 +85,9 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **access_token** — Access token
 * **host** - Host for performing requests. The default value is **secure.xsolla.com**
 * **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead of **host**
-* **lightbox** — Options for modal dialog that contains frame of PayStation
-    * **width** — Width of lightbox frame. If null, depends on paystation width. Default is null
-    * **height** — Height of lightbox frame. If null, depends on paystation height. Default is '100%'
+* **lightbox** — Options for modal dialog that contains frame of Pay Station
+    * **width** — Width of lightbox frame. If null, depends on Pay Station width. Default is null
+    * **height** — Height of lightbox frame. If null, depends on Pay Station height. Default is '100%'
     * **zIndex** — Property controls the vertical stacking order, default is 1000
     * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
     * **overlayBackground** — Background of the overlay, default is '#000000'
@@ -100,9 +100,9 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **spinnerColor** — Color of the spinner, not set by default
     * **spinnerUrl** — URL of custom spinner, default is null
     * **spinnerRotationPeriod** — Rotation period of custom spinner, default 0
-* **childWindow** — Options for child window that contains PayStation. Suitable for mobile version
-    * **target** — The target option specifies where to open the Paystation window, can be '_blank', '_self', '_parent', default is '_blank'
-* **iframeOnly** — Open Paystation in iframe on all devices
+* **childWindow** — Options for child window that contains Pay Station. Suitable for mobile version
+    * **target** — The target option specifies where to open the Pay Station window, can be '_blank', '_self', '_parent', default is '_blank'
+* **iframeOnly** — Open Pay Station in iframe on all devices
 
 ### Widget API
 
@@ -111,7 +111,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 You can refer to the widget object, using the following methods:
 
 * **init(options)** — Parameter setting
-* **open** — Opening of payment interface (PayStation). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
+* **open** — Opening of payment interface (Pay Station). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
 * **on(events, handler)** — Attach an event handler function for one or more events to the widget.
     * **events** (string) — One or more space-separated event types, such as "open" or "close status".
     * **handler** (function) — A function to execute when the event is triggered.
@@ -123,14 +123,14 @@ You can refer to the widget object, using the following methods:
 
 * **init** — Event on widget initialization
 * **open** — Event on opening of the widget
-* **load** — Event after payment interface (PayStation) was loaded
-* **close** — Event after payment interface (PayStation) was closed
+* **load** — Event after payment interface (Pay Station) was loaded
+* **close** — Event after payment interface (Pay Station) was closed
 * **status** — Event when the user was moved on the status page
 * **status-invoice** — Event when the user was moved on the status page, but the payment is not yet completed
 * **status-delivering** — Event when the user was moved on the status page, payment was completed, and we’re sending payment notification
 * **status-done** — Event when the user was moved on the status page, and the payment was completed successfully
 * **status-troubled** — Event when the user was moved on the status page, but the payment failed
-* **user-country** — Event when PayStation have determine user country
+* **user-country** — Event when Pay Station have determine user country
 
 You can access list of event using XPayStationWidget.eventTypes object.
 
@@ -149,7 +149,7 @@ XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function (event, data)
 ```
 #### Going to the payment
 
-To open PayStation you can use .open() method or set "data-xpaystation-widget-open" attribute to HTML-element associated with the beginning of the payment, e.g. Payment button.
+To open Pay Station you can use .open() method or set "data-xpaystation-widget-open" attribute to HTML-element associated with the beginning of the payment, e.g. Payment button.
 
 JavaScript call:
 ``` javascript

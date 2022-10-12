@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.9
+- [fix] Fixed documentation
+
 ## 1.2.8
 - [fix] Fix iframe closing case
 

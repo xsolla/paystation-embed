@@ -26,7 +26,7 @@ module.exports = (function () {
     };
     var DEFAULT_OPTIONS = Object.assign({}, COMMON_OPTIONS, {
         width: null,
-        height: '100%',
+        height: null,
         contentMargin: '10px'
     });
     var DEFAULT_OPTIONS_MOBILE = Object.assign({}, COMMON_OPTIONS, {
@@ -45,6 +45,8 @@ module.exports = (function () {
         height: 500,
         width: 600
     };
+
+    var DEFAULT_HEIGHT = '100%';
 
     var handleKeyupEventName = wrapEventInNamespace('keyup');
     var handleResizeEventName = wrapEventInNamespace('resize');
@@ -308,9 +310,12 @@ module.exports = (function () {
             this.message.on('dimensions', (function (event) {
                 var data = event.detail;
                 if (data.dimensions) {
-                    psDimensions = Helpers.zipObject(['width', 'height'].map(function (dim) {
-                        return [dim, Math.max(MIN_PS_DIMENSIONS[dim] || 0, data.dimensions[dim] || 0) + 'px'];
-                    }));
+                    psDimensions = {
+                        width: Math.max(MIN_PS_DIMENSIONS.width || 0, data.dimensions.width || 0) + 'px',
+                        height: data.dimensions.height
+                            ? Math.max(MIN_PS_DIMENSIONS.height || 0, data.dimensions.height || 0) + 'px'
+                            : DEFAULT_HEIGHT
+                    }
 
                     lightBoxResize();
                 }

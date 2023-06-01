@@ -35,7 +35,8 @@ module.exports = (function () {
         STATUS_DELIVERING: 'status-delivering',
         STATUS_TROUBLED: 'status-troubled',
         STATUS_DONE: 'status-done',
-        USER_COUNTRY: 'user-country'
+        USER_COUNTRY: 'user-country',
+        FCP: 'fcp'
     };
 
     var DEFAULT_CONFIG = {
@@ -195,6 +196,10 @@ module.exports = (function () {
             that.triggerCustomEvent(App.eventTypes.USER_COUNTRY, userCountry);
         }
 
+        function handleFcp(event) {
+            that.triggerCustomEvent(App.eventTypes.FCP, event.detail);
+        }
+
         this.postMessage = null;
         if ((new Device).isMobile() && !this.config.iframeOnly) {
             var childWindow = new ChildWindow;
@@ -213,10 +218,12 @@ module.exports = (function () {
                 that.triggerEvent(App.eventTypes.CLOSE_WINDOW);
                 childWindow.off('status', handleStatus);
                 childWindow.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
+                childWindow.off(App.eventTypes.FCP, handleFcp);
                 childWindow.off('close', handleClose);
             });
             childWindow.on('status', handleStatus);
             childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
+            childWindow.on(App.eventTypes.FCP, handleFcp);
             childWindow.open(url, this.config.childWindow);
             that.childWindow = childWindow;
         } else {
@@ -236,10 +243,12 @@ module.exports = (function () {
                 that.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
                 lightBox.off('status', handleStatus);
                 lightBox.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
+                lightBox.off(App.eventTypes.FCP, handleFcp);
                 lightBox.off('close', handleClose);
             });
             lightBox.on('status', handleStatus);
             lightBox.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
+            lightBox.on(App.eventTypes.FCP, handleFcp);
             lightBox.openFrame(url, this.config.lightbox);
             that.childWindow = lightBox;
         }

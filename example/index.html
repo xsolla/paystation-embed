@@ -59,6 +59,9 @@
             XPayStationWidget.on(XPayStationWidget.eventTypes.USER_COUNTRY, function (event) {
                 console.log('user country', arguments, event.detail.user_country);
             });
+            XPayStationWidget.on(XPayStationWidget.eventTypes.FCP, function (event) {
+                console.log('fcp', arguments, event.detail);
+            });
             XPayStationWidget.init(options);
         }, false);
         var head = document.getElementsByTagName('head')[0];

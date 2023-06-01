@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://cdn.xsolla.net/embed/paystation/1.2.7/widget.min.js](https://cdn.xsolla.net/embed/paystation/1.2.7/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://cdn.xsolla.net/embed/paystation/1.2.9/widget.min.js](https://cdn.xsolla.net/embed/paystation/1.2.9/widget.min.js). Use this URL to integrate script on your website.
 
 #### Installing with Bower
 
@@ -131,6 +131,7 @@ You can refer to the widget object, using the following methods:
 * **status-done** — Event when the user was moved on the status page, and the payment was completed successfully
 * **status-troubled** — Event when the user was moved on the status page, but the payment failed
 * **user-country** — Event when Pay Station have determine user country
+* **fcp** — Event when in Pay Station occures fcp
 
 You can access list of event using XPayStationWidget.eventTypes object.
 

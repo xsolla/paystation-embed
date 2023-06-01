@@ -332,6 +332,9 @@ module.exports = (function () {
         this.message.on('user-country', (function (event) {
             this.triggerEvent('user-country', event.detail);
         }).bind(this));
+        this.message.on('fcp', (function (event) {
+            this.triggerEvent('fcp', event.detail);
+        }).bind(this));
 
         // Resize
         window.addEventListener(handleResizeEventName, lightBoxResize);

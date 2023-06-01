@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.9
+- [feature] Add new event FCP
 - [fix] Fixed documentation
 
 ## 1.2.8

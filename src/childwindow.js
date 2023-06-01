@@ -65,6 +65,9 @@ module.exports = (function () {
             that.message.on('user-country', function (event) {
                 that.triggerEvent('user-country', event.detail);
             });
+            that.message.on('fcp', function (event) {
+                that.triggerEvent('fcp', event.detail);
+            });
         };
 
         switch (options.target) {

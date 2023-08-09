@@ -132,6 +132,7 @@ You can refer to the widget object, using the following methods:
 * **status-troubled** — Event when the user was moved on the status page, but the payment failed
 * **user-country** — Event when Pay Station have determine user country
 * **fcp** — Event when in Pay Station occures fcp
+* **error** — Event when in Pay Station 4 occures payment flow errors
 
 You can access list of event using XPayStationWidget.eventTypes object.
 

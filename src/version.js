@@ -1,1 +1,1 @@
-module.exports = '1.2.9';
+module.exports = '1.2.10';

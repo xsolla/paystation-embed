@@ -62,6 +62,9 @@
             XPayStationWidget.on(XPayStationWidget.eventTypes.FCP, function (event) {
                 console.log('fcp', arguments, event.detail);
             });
+            XPayStationWidget.on(XPayStationWidget.eventTypes.ERROR, function (event) {
+                console.log('error event', arguments, event.detail);
+            });
             XPayStationWidget.init(options);
         }, false);
         var head = document.getElementsByTagName('head')[0];

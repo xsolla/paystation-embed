@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.10
+- [feature] Add new event - error (PS 4)
+
 ## 1.2.9
 - [feature] Add new event FCP
 - [fix] Fixed documentation
@@ -27,7 +30,7 @@
 ## 1.2.2 - 2020-10-21
 
 - [fix] Fixed adding custom event
-- [feature] Added decorator for handler method `XPayStationWidget.on` 
+- [feature] Added decorator for handler method `XPayStationWidget.on`
 
 ## 1.2.1 - 2020-09-08
 

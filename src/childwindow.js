@@ -68,6 +68,9 @@ module.exports = (function () {
             that.message.on('fcp', function (event) {
                 that.triggerEvent('fcp', event.detail);
             });
+            that.message.on('error', function (event) {
+                that.triggerEvent('error', event.detail);
+            });
         };
 
         switch (options.target) {

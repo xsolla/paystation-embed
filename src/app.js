@@ -36,7 +36,8 @@ module.exports = (function () {
         STATUS_TROUBLED: 'status-troubled',
         STATUS_DONE: 'status-done',
         USER_COUNTRY: 'user-country',
-        FCP: 'fcp'
+        FCP: 'fcp',
+        ERROR: 'error'
     };
 
     var DEFAULT_CONFIG = {
@@ -200,6 +201,10 @@ module.exports = (function () {
             that.triggerCustomEvent(App.eventTypes.FCP, event.detail);
         }
 
+        function handleError(event) {
+            that.triggerCustomEvent(App.eventTypes.ERROR, event.detail);
+        }
+
         this.postMessage = null;
         if ((new Device).isMobile() && !this.config.iframeOnly) {
             var childWindow = new ChildWindow;
@@ -219,11 +224,13 @@ module.exports = (function () {
                 childWindow.off('status', handleStatus);
                 childWindow.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
                 childWindow.off(App.eventTypes.FCP, handleFcp);
+                childWindow.off(App.eventTypes.ERROR, handleError);
                 childWindow.off('close', handleClose);
             });
             childWindow.on('status', handleStatus);
             childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             childWindow.on(App.eventTypes.FCP, handleFcp);
+            childWindow.on(App.eventTypes.ERROR, handleError);
             childWindow.open(url, this.config.childWindow);
             that.childWindow = childWindow;
         } else {
@@ -244,11 +251,13 @@ module.exports = (function () {
                 lightBox.off('status', handleStatus);
                 lightBox.off(App.eventTypes.USER_COUNTRY, handleUserLocale);
                 lightBox.off(App.eventTypes.FCP, handleFcp);
+                lightBox.off(App.eventTypes.ERROR, handleError);
                 lightBox.off('close', handleClose);
             });
             lightBox.on('status', handleStatus);
             lightBox.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             lightBox.on(App.eventTypes.FCP, handleFcp);
+            lightBox.on(App.eventTypes.ERROR, handleError);
             lightBox.openFrame(url, this.config.lightbox);
             that.childWindow = lightBox;
         }

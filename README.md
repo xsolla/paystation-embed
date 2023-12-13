@@ -168,7 +168,36 @@ HTML example:
 Browsers are sensitive to anything that could affect user security.
 You should work carefully with [user trusted events](https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted), such as click handling.
 If a payment method opens in a new browser tab, you must ensure there is a connection between this functionality and a trusted event.
-If the conditions for opening a new tab depend on asynchronous code, the event won’t be trusted and result in an error.
-Refactoring the callback code that opens a new tab in synchronous style can resolve this problem.
+If the conditions for opening a new tab depend on asynchronous code, the event won’t be trusted, resulting in an error.
+Refactoring the callback code that opens a new tab in a synchronous style can resolve this problem.
+
+You may encounter a similar problem when opening a new window after requesting a token for Pay Station. Below, you can see the pseudocode that *DOES NOT* work.
+
+```javascript
+    button.addEventListener("click", async () => {
+      const token = await getToken();
+      window.open(`https://www.pay-station-url-example.com?token=${token}`, "_blank");
+    });
+```
+
+It looks like everything is logically arranged: first, you get the data to open a new window, and then open it. However, you lose the connection between the trusted user event and opening a new window when you organize the code this way.
+
+It would be more correct to take a different approach:
+
+1. Immediately open a new window in response to a user-trusted click.
+2. Save a reference to the new window.
+3. Place a loader in the new window while the main content is not loaded.
+4. Send a request to get a token for Pay Station.
+5. After receiving the token, form a link for Pay Station with this token, and pass it to the opened window.
+
+```javascript
+    button.addEventListener("click", async () => {
+      const newWindow = window.open("", "_blank");
+      newWindow.document.body.innerHTML = "<div>Loading...</div>";
+      
+      const token = await getToken();
+      newWindow.location = `https://www.pay-station-url-example.com?token=${token}`;
+    });
+```
 
 Additional code that runs on a widget button click may also cause similar problems.

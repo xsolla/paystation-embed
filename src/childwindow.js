@@ -34,16 +34,18 @@ module.exports = (function () {
 
         var that = this;
         var addHandlers = function () {
-            that.on('close', function handleClose() {
+            function closeChildWindow() {
+                that.off('close', closeChildWindow)
+
                 if (timer) {
                     global.clearTimeout(timer);
                 }
                 if (that.childWindow) {
                     that.childWindow.close();
                 }
+            }
 
-                that.off('close', handleClose)
-            });
+            that.on('close', closeChildWindow);
 
             // Cross-window communication
             that.message = new PostMessage(that.childWindow);
@@ -58,9 +60,9 @@ module.exports = (function () {
             that.message.on('status', function (event) {
                 that.triggerEvent('status', event.detail);
             });
-            that.on('close', function handleClose() {
-                that.message.off();
-                that.off('close', handleClose);
+            that.message.on('close', function handleClose() {
+                closeChildWindow();
+                that.message.off('close', handleClose);
             });
             that.message.on('user-country', function (event) {
                 that.triggerEvent('user-country', event.detail);

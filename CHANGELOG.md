@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.11
+- [fix] Fixed mobile window close handler (PS 4)
+
 ## 1.2.10
 - [feature] Add new event - error (PS 4)
 

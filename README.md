@@ -2,9 +2,9 @@
 
 ## Integration Guide
 
-Xsolla team created a script to simplify the integration of Pay Station into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/v2/pay-station/#api_payment_ui).
+Xsolla team created a script to simplify the integration of Pay Station into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/pay-station/operation/create-token/).
 
-[See Demo](http://livedemo.xsolla.com/paystation/)
+[See Demo](http://livedemo.xsolla.com/pay-station/)
 
 Features:
 * the most appropriate interface depending on the type of device
@@ -15,15 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://cdn.xsolla.net/embed/paystation/1.2.9/widget.min.js](https://cdn.xsolla.net/embed/paystation/1.2.9/widget.min.js). Use this URL to integrate script on your website.
-
-#### Installing with Bower
-
-If you want to include the source code of widget as a part of your project, you can install the package using [Bower](http://bower.io/).
-
-``` bash
-$ bower install xsolla-paystation-widget
-```
+Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.4.0/widget.min.js](https://cdn.xsolla.net/embed/paystation/1.2.9/widget.min.js). Use this URL to integrate script on your website.
 
 ### Script Loading
 
@@ -31,17 +23,20 @@ $ bower install xsolla-paystation-widget
 
 ``` javascript
 <script>
-    var options = {
+    const options = {
         access_token: 'abcdef1234567890abcdef1234567890'
     };
-    var s = document.createElement('script');
+    
+    const s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "//cdn.xsolla.net/embed/paystation/1.2.7/widget.min.js";
+    s.src = "https://cdn.xsolla.net/payments-bucket-prod/embed/1.4.0/widget.min.js";
+    
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
     }, false);
-    var head = document.getElementsByTagName('head')[0];
+    
+    const head = document.getElementsByTagName('head')[0];
     head.appendChild(s);
 </script>
 ```
@@ -49,7 +44,7 @@ $ bower install xsolla-paystation-widget
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="//cdn.xsolla.net/embed/paystation/1.2.7/widget.min.js"></script>
+<script src="https://cdn.xsolla.net/payments-bucket-prod/embed/1.4.0/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'
@@ -62,7 +57,7 @@ $ bower install xsolla-paystation-widget
 If your project uses CommonJS module format, you can access the widget by require()
 
 ``` javascript
-var XPayStationWidget = require('PATH_TO_WIDGET/embed');
+const XPayStationWidget = require('PATH_TO_WIDGET/embed');
 XPayStationWidget.init({
    access_token: 'abcdef1234567890abcdef1234567890'
 });

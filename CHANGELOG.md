@@ -1,9 +1,12 @@
 # Changelog
 
-## 1.2.11
+## 1.3.2
+- [fix] Fixed lightbox resize logic, if width and height options was exist
+
+## 1.3.1
 - [fix] Fixed mobile window close handler (PS 4)
 
-## 1.2.10
+## 1.3.0
 - [feature] Add new event - error (PS 4)
 
 ## 1.2.9

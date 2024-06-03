@@ -221,25 +221,35 @@ module.exports = (function () {
             var horMargin = contentWidth - lightBoxContentElement.offsetWidth,
                 vertMargin = contentHeight - lightBoxContentElement.offsetHeight;
 
-            var horDiff = containerWidth - contentWidth,
-                vertDiff = containerHeight - contentHeight;
+            var widthAfterResize = containerWidth - horMargin;
 
-            if (horDiff < 0) {
-                lightBoxContentElement.style.width = containerWidth - horMargin + 'px';
-            } else {
-                lightBoxContentElement.style.left = Math.round(horDiff / 2) + 'px';
+            if (widthAfterResize > contentWidth) {
+                widthAfterResize = contentWidth;
             }
 
-            if (vertDiff < 0) {
-                lightBoxContentElement.style.height = containerHeight - vertMargin + 'px';
-            } else {
-                lightBoxContentElement.style.top = Math.round(vertDiff / 2) + 'px';
+            if (widthAfterResize > containerWidth) {
+                widthAfterResize = containerWidth;
             }
+
+            var heightAfterResize = containerHeight - vertMargin;
+
+            if (heightAfterResize > contentHeight) {
+                heightAfterResize = contentHeight;
+            }
+
+            if (heightAfterResize > containerHeight) {
+                heightAfterResize = containerHeight;
+            }
+
+            lightBoxContentElement.style.width = withDefaultPXUnit(widthAfterResize);
+            lightBoxContentElement.style.height = withDefaultPXUnit(heightAfterResize);
+
+            var leftOffset = ((window.innerWidth - widthAfterResize) / 2) - (horMargin / 2);
+            var topOffset = ((window.innerHeight - heightAfterResize) / 2)  - (vertMargin / 2);
+
+            lightBoxContentElement.style.left = withDefaultPXUnit(Math.max(leftOffset, 0));
+            lightBoxContentElement.style.top = withDefaultPXUnit(Math.max(topOffset, 0));
         };
-
-        if (options.width && options.height) {
-            lightBoxResize = Helpers.once(lightBoxResize.bind(this));
-        }
 
         function outerWidth(el) {
             var width = el.offsetWidth;

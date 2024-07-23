@@ -147,11 +147,21 @@ function addEventObject(context, wrapEventInNamespace) {
   };
 }
 
+function getPaymentUrlWithConsentId(url, consentId) {
+    let paymentUrl = new URL(url);
+
+    paymentUrl.searchParams.append('consentId', consentId);
+
+    return paymentUrl.toString();
+}
+
+
 module.exports = {
-  addEventObject: addEventObject,
-  isEmpty: isEmpty,
-  uniq: uniq,
-  zipObject: zipObject,
-  param: param,
-  once: once,
+    addEventObject: addEventObject,
+    isEmpty: isEmpty,
+    uniq: uniq,
+    zipObject: zipObject,
+    param: param,
+    once: once,
+    getPaymentUrlWithConsentId: getPaymentUrlWithConsentId
 }

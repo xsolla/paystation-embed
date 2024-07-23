@@ -47,7 +47,8 @@ module.exports = (function () {
         lightbox: {},
         childWindow: {},
         host: 'secure.xsolla.com',
-        iframeOnly: false
+        iframeOnly: false,
+        consentId: null
     };
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
@@ -70,10 +71,15 @@ module.exports = (function () {
             query.access_data = JSON.stringify(this.config.access_data);
         }
 
-        const urlWithoutQueryParams = this.config.sandbox ?
+        const paymentUrl = this.config.sandbox ?
             SANDBOX_PAYSTATION_URL :
-            'https://' + this.config.host + '/paystation2/?';
-        return urlWithoutQueryParams + Helpers.param(query);
+            'https://' + this.config.host + '/paystation2/?' + Helpers.param(query);
+
+        if (this.config.consentId) {
+            return Helpers.getPaymentUrlWithConsentId(paymentUrl, this.config.consentId)
+        }
+
+        return paymentUrl;
     };
 
     App.prototype.checkConfig = function () {

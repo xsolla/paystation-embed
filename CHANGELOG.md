@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.3
+- [chore] update `gulp-uglify` to version 3.0.2
+
 ## 1.3.2
 - [fix] Fixed lightbox resize logic, if width and height options was exist
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.4
+- [fix] usage widget in sandbox mode
+
 ## 1.3.3
 - [chore] update `gulp-uglify` to version 3.0.2
 

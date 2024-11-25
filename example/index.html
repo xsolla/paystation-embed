@@ -28,7 +28,7 @@
         var options = {
             access_token: '3gokCwFzK290d4Jyx4UEoR9JiUzq6lg5',
             lightbox: {
-                width: '700px',
+                width: '800px',
                 height: '700px',
             }
         };
@@ -49,8 +49,8 @@
             XPayStationWidget.on(XPayStationWidget.eventTypes.CLOSE, function () {
                 console.log('close event', arguments);
             });
-            XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function () {
-                console.log('status event', arguments);
+            XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function (event, data) {
+                console.log('status event', data, arguments);
             });
             XPayStationWidget.on([
                 XPayStationWidget.eventTypes.STATUS_INVOICE,
@@ -71,6 +71,7 @@
             });
             XPayStationWidget.init(options);
         }, false);
+
         var head = document.getElementsByTagName('head')[0];
         head.appendChild(s);
     </script>

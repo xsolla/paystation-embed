@@ -1,150 +1,162 @@
 function isEmpty(value) {
-  return value === null || value === undefined;
+    return value === null || value === undefined;
 }
 
 function uniq(list) {
-  return list.filter(function(x, i, a) {
-    return a.indexOf(x) == i
-  });
+    return list.filter(function (x, i, a) {
+        return a.indexOf(x) == i
+    });
 }
 
 function zipObject(props, values) {
-  var index = -1,
-      length = props ? props.length : 0,
-      result = {};
+    var index = -1,
+        length = props ? props.length : 0,
+        result = {};
 
-  if (length && !values && !Array.isArray(props[0])) {
-    values = [];
-  }
-  while (++index < length) {
-    var key = props[index];
-    if (values) {
-      result[key] = values[index];
-    } else if (key) {
-      result[key[0]] = key[1];
+    if (length && !values && !Array.isArray(props[0])) {
+        values = [];
     }
-  }
-  return result;
+    while (++index < length) {
+        var key = props[index];
+        if (values) {
+            result[key] = values[index];
+        } else if (key) {
+            result[key[0]] = key[1];
+        }
+    }
+    return result;
 }
 
 function param(a) {
-  var s = [];
+    var s = [];
 
-  var add = function (k, v) {
-      v = typeof v === 'function' ? v() : v;
-      v = v === null ? '' : v === undefined ? '' : v;
-      s[s.length] = encodeURIComponent(k) + '=' + encodeURIComponent(v);
-  };
+    var add = function (k, v) {
+        v = typeof v === 'function' ? v() : v;
+        v = v === null ? '' : v === undefined ? '' : v;
+        s[s.length] = encodeURIComponent(k) + '=' + encodeURIComponent(v);
+    };
 
-  var buildParams = function (prefix, obj) {
-      var i, len, key;
+    var buildParams = function (prefix, obj) {
+        var i, len, key;
 
-      if (prefix) {
-          if (Array.isArray(obj)) {
-              for (i = 0, len = obj.length; i < len; i++) {
-                  buildParams(
-                      prefix + '[' + (typeof obj[i] === 'object' && obj[i] ? i : '') + ']',
-                      obj[i]
-                  );
-              }
-          } else if (String(obj) === '[object Object]') {
-              for (key in obj) {
-                  buildParams(prefix + '[' + key + ']', obj[key]);
-              }
-          } else {
-              add(prefix, obj);
-          }
-      } else if (Array.isArray(obj)) {
-          for (i = 0, len = obj.length; i < len; i++) {
-              add(obj[i].name, obj[i].value);
-          }
-      } else {
-          for (key in obj) {
-              buildParams(key, obj[key]);
-          }
-      }
-      return s;
-  };
+        if (prefix) {
+            if (Array.isArray(obj)) {
+                for (i = 0, len = obj.length; i < len; i++) {
+                    buildParams(
+                        prefix + '[' + (typeof obj[i] === 'object' && obj[i] ? i : '') + ']',
+                        obj[i]
+                    );
+                }
+            } else if (String(obj) === '[object Object]') {
+                for (key in obj) {
+                    buildParams(prefix + '[' + key + ']', obj[key]);
+                }
+            } else {
+                add(prefix, obj);
+            }
+        } else if (Array.isArray(obj)) {
+            for (i = 0, len = obj.length; i < len; i++) {
+                add(obj[i].name, obj[i].value);
+            }
+        } else {
+            for (key in obj) {
+                buildParams(key, obj[key]);
+            }
+        }
+        return s;
+    };
 
-  return buildParams('', a).join('&');
+    return buildParams('', a).join('&');
 };
 
 
 function once(f) {
-  return function() {
-      f(arguments);
-      f = function() {};
-  }
+    return function () {
+        f(arguments);
+        f = function () {
+        };
+    }
 }
 
 function addEventObject(context, wrapEventInNamespace) {
-    var dummyWrapper = function(event) { return event };
+    var dummyWrapper = function (event) {
+        return event
+    };
     var wrapEventInNamespace = wrapEventInNamespace || dummyWrapper;
     var eventsList = [];
+    var handlers = new WeakMap();
 
     function isStringContainedSpace(str) {
-      return / /.test(str)
+        return / /.test(str)
     }
 
     return {
-      trigger: (function(eventName, data) {
-          var eventInNamespace = wrapEventInNamespace(eventName);
-          try {
-              var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
-          } catch(e) {
-              var event = document.createEvent('CustomEvent');
-              event.initCustomEvent(eventInNamespace, true, true, data);
-          }
-          document.dispatchEvent(event);
-      }).bind(context),
-      on: (function(eventName, handle, options) {
+        trigger: (function (eventName, data) {
+            var eventInNamespace = wrapEventInNamespace(eventName);
+            try {
+                var event = new CustomEvent(eventInNamespace, {detail: data}); // Not working in IE
+            } catch (e) {
+                var event = document.createEvent('CustomEvent');
+                event.initCustomEvent(eventInNamespace, true, true, data);
+            }
+            document.dispatchEvent(event);
+        }).bind(context),
+        on: (function (eventName, handle, options) {
+            function addEvent(eventName, handle, options) {
+                const handlerDecorator = function (event) {
+                    handle(event, event.detail);
+                }
 
-        function addEvent(eventName, handle, options) {
-          var eventInNamespace = wrapEventInNamespace(eventName);
-          document.addEventListener(eventInNamespace, handle, options);
-          eventsList.push({name: eventInNamespace, handle: handle, options: options });
-        }
+                handlers.set(handle, handlerDecorator);
 
-        if (isStringContainedSpace(eventName)) {
-          var events = eventName.split(' ');
-          events.forEach(function(parsedEventName) {
-            addEvent(parsedEventName, handle, options)
-          })
-        } else {
-          addEvent(eventName, handle, options);
-        }
+                var eventInNamespace = wrapEventInNamespace(eventName);
+                document.addEventListener(eventInNamespace, handlerDecorator, options);
+                eventsList.push({name: eventInNamespace, handle: handlerDecorator, options: options});
+            }
 
-      }).bind(context),
+            if (isStringContainedSpace(eventName)) {
+                var events = eventName.split(' ');
+                events.forEach(function (parsedEventName) {
+                    addEvent(parsedEventName, handle, options)
+                })
+            } else {
+                addEvent(eventName, handle, options);
+            }
 
-      off: (function(eventName, handle, options) {
-        const offAllEvents = !eventName && !handle && !options;
+        }).bind(context),
 
-        if (offAllEvents) {
-          eventsList.forEach(function(event) {
-            document.removeEventListener(event.name, event.handle, event.options);
-          });
-          return;
-        }
+        off: (function (eventName, handle, options) {
+            const offAllEvents = !eventName && !handle && !options;
 
-        function removeEvent(eventName, handle, options) {
-          var eventInNamespace = wrapEventInNamespace(eventName);
-          document.removeEventListener(eventInNamespace, handle, options);
-          eventsList = eventsList.filter(function(event) {
-            return event.name !== eventInNamespace;
-          });
-        }
+            if (offAllEvents) {
+                eventsList.forEach(function (event) {
+                    document.removeEventListener(event.name, event.handle, event.options);
+                });
+                return;
+            }
 
-        if (isStringContainedSpace(eventName)) {
-          var events = eventName.split(' ');
-          events.forEach(function(parsedEventName) {
-            removeEvent(parsedEventName, handle, options)
-          })
-        } else {
-          removeEvent(eventName, handle, options);
-        }
+            function removeEvent(eventName, handle, options) {
+                var eventInNamespace = wrapEventInNamespace(eventName);
 
-      }).bind(context)
-  };
+                const handlerDecorator = handlers.get(handle);
+
+                document.removeEventListener(eventInNamespace, handlerDecorator, options);
+                eventsList = eventsList.filter(function (event) {
+                    return event.name !== eventInNamespace;
+                });
+            }
+
+            if (isStringContainedSpace(eventName)) {
+                var events = eventName.split(' ');
+                events.forEach(function (parsedEventName) {
+                    removeEvent(parsedEventName, handle, options)
+                })
+            } else {
+                removeEvent(eventName, handle, options);
+            }
+
+        }).bind(context)
+    };
 }
 
 function getPaymentUrlWithConsentId(url, consentId) {

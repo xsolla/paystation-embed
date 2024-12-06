@@ -289,11 +289,7 @@ module.exports = (function () {
             return;
         }
 
-        const handlerDecorator = function(event) {
-            handler(event, event.detail);
-        }
-
-        this.eventObject.on(event, handlerDecorator, options);
+        this.eventObject.on(event, handler, options);
     };
 
     /**

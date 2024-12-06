@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.5
+- [fix] .off events now work correctly
+
 ## 1.3.4
 - [fix] usage widget in sandbox mode
 

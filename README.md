@@ -98,6 +98,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **childWindow** — Options for child window that contains Pay Station. Suitable for mobile version
     * **target** — The target option specifies where to open the Pay Station window, can be '_blank', '_self', '_parent', default is '_blank'
 * **iframeOnly** — Open Pay Station in iframe on all devices
+* **queryParams** — Query params to be added to Pay Station url
 
 ### Widget API
 

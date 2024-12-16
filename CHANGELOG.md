@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+- [feature] queryParams field in widget options
+
 ## 1.3.5
 - [fix] .off events now work correctly
 

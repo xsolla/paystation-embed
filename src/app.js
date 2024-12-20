@@ -64,7 +64,7 @@ module.exports = (function () {
             return this.config.payment_url;
         }
 
-        const query = {};
+        const query = this.config.queryParams || {};
         if (this.config.access_token) {
             query.access_token = this.config.access_token;
         } else {

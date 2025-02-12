@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.0
+- [feature] we now support allow="payment" flag for PayStation iframe
+
 ## 1.4.0
 - [feature] queryParams field in widget options
 

@@ -123,6 +123,7 @@ module.exports = (function () {
             iframe.src = settings.url;
             iframe.frameBorder = '0';
             iframe.allowFullscreen = true;
+            iframe.allow = 'payment';
 
             var spinner = document.createElement('div');
             spinner.className = settings.prefix + '-spinner';

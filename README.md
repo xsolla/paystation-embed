@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.3.4/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.3.4/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js). Use this URL to integrate script on your website.
 
 ### Script Loading
 
@@ -30,7 +30,7 @@ Script is located on our CDN and is available here: [https://cdn.xsolla.net/pay
     const s = document.createElement('script');
     s.type = "text/javascript";
     s.async = true;
-    s.src = "https://cdn.xsolla.net/payments-bucket-prod/embed/1.3.4/widget.min.js";
+    s.src = "https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js";
     
     s.addEventListener('load', function (e) {
         XPayStationWidget.init(options);
@@ -44,7 +44,7 @@ Script is located on our CDN and is available here: [https://cdn.xsolla.net/pay
 #### Synchronous loading (blocks content)
 
 ``` javascript
-<script src="https://cdn.xsolla.net/payments-bucket-prod/embed/1.3.4/widget.min.js"></script>
+<script src="https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js"></script>
 <script>
     XPayStationWidget.init({
         access_token: 'abcdef1234567890abcdef1234567890'

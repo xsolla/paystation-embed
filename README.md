@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.1/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.1/widget.min.js). Use this URL to integrate script on your website.
 
 ### Script Loading
 
@@ -197,3 +197,11 @@ It would be more correct to take a different approach:
 ```
 
 Additional code that runs on a widget button click may also cause similar problems.
+
+### Troubleshooting Build Issues
+
+On some modern macOS versions (e.g., 15.5), there are difficulties building the project 
+in a local environment due to an outdated version of Node.js. 
+In some cases, using the Node.js version specified in the .nvmrc file might help, 
+but if that doesn’t work, you can try building the project using Docker 
+and replacing the contents of the dist directory on your local machine with the one from the Docker container.

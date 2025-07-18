@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.1
+- [fix] fixed issues in Pay Station 4 related to changing iOS device orientation in Opera, Google Chrome, and Mozilla Firefox browsers.
+
 ## 1.5.0
 - [feature] we now support allow="payment" flag for PayStation iframe
 

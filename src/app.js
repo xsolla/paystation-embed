@@ -21,6 +21,8 @@ module.exports = (function () {
         this.childWindow = null;
     }
 
+    App.prototype.isAppOpened = false;
+
     App.eventTypes = {
         INIT: 'init',
         OPEN: 'open',
@@ -169,6 +171,12 @@ module.exports = (function () {
      * Open payment interface (PayStation)
      */
     App.prototype.open = function () {
+        if (App.prototype.isAppOpened) {
+            return;
+        }
+
+        App.prototype.isAppOpened = true;
+
         this.checkConfig();
         this.checkApp();
 
@@ -227,6 +235,7 @@ module.exports = (function () {
                 childWindow.off('load', handleLoad);
             });
             childWindow.on('close', function handleClose() {
+                App.prototype.isAppOpened = false;
                 that.triggerEvent(App.eventTypes.CLOSE);
                 that.triggerEvent(App.eventTypes.CLOSE_WINDOW);
                 childWindow.off('status', handleStatus);
@@ -254,6 +263,7 @@ module.exports = (function () {
                 lightBox.off('load', handleLoad);
             });
             lightBox.on('close', function handleClose() {
+                App.prototype.isAppOpened = false;
                 that.triggerEvent(App.eventTypes.CLOSE);
                 that.triggerEvent(App.eventTypes.CLOSE_LIGHTBOX);
                 lightBox.off('status', handleStatus);

@@ -203,21 +203,21 @@ module.exports = (function () {
             this.triggerEvent('load');
         }).bind(this));
 
-		var detectOS = function () {
-			const platform = navigator.platform.toLowerCase();
-			const userAgent = navigator.userAgent.toLowerCase();
+        var detectOS = function () {
+            const platform = navigator.platform.toLowerCase();
+            const userAgent = navigator.userAgent.toLowerCase();
 
-			if (/windows phone/.test(userAgent)) return "Windows Phone";
-			if (/win/.test(platform)) return "Windows";
-			if (/mac/.test(platform)) return "macOS";
-			if (/linux/.test(platform)) return "Linux";
-			if (/iphone|ipad|ipod/.test(userAgent)) return "iOS";
-			if (/android/.test(userAgent)) return "Android";
+            if (/windows phone/.test(userAgent)) return "Windows Phone";
+            if (/win/.test(platform)) return "Windows";
+            if (/mac/.test(platform)) return "macOS";
+            if (/linux/.test(platform)) return "Linux";
+            if (/iphone|ipad|ipod/.test(userAgent)) return "iOS";
+            if (/android/.test(userAgent)) return "Android";
 
-			return "Unknown OS";
-		};
+            return "Unknown OS";
+        };
 
-		var lightBoxResize = function () {
+        var lightBoxResize = function () {
             var width = options.width ? options.width : psDimensions.width;
             var height = options.height ? options.height : psDimensions.height;
 
@@ -256,29 +256,29 @@ module.exports = (function () {
                 heightAfterResize = containerHeight;
             }
 
-			var isIos = detectOS() === "iOS";
+            var isIos = detectOS() === "iOS";
 
-			var isBrowserWithResizeIssue = /fxios|crios|opt/i.test(navigator.userAgent);
+            var isBrowserWithResizeIssue = /fxios|crios|opt/i.test(navigator.userAgent);
             var isFirefoxOrOperaWithResizeIssue = /fxios|opt/i.test(
                 navigator.userAgent
             );
 
-			if (isIos && isBrowserWithResizeIssue) {
-				lightBoxContentElement.style.width = "100vw";
+            if (isIos && isBrowserWithResizeIssue) {
+                lightBoxContentElement.style.width = "100vw";
                 /*
                 * Browsers like Firefox and Opera display Pay Station correctly when the height is set to 100vh.
                 * However, Google Chrome restricts vertical scrolling of Pay Station at that height.
                 * Through experimentation, a value of 90vh was found to work better for Chrome.
                 * */
-				lightBoxContentElement.style.height = isFirefoxOrOperaWithResizeIssue
-					? "100vh"
-					: "90vh";
-			} else {
-				lightBoxContentElement.style.width =
-					withDefaultPXUnit(widthAfterResize);
-				lightBoxContentElement.style.height =
-					withDefaultPXUnit(heightAfterResize);
-			}
+                lightBoxContentElement.style.height = isFirefoxOrOperaWithResizeIssue
+                    ? "100vh"
+                    : "90vh";
+            } else {
+                lightBoxContentElement.style.width =
+                    withDefaultPXUnit(widthAfterResize);
+                lightBoxContentElement.style.height =
+                    withDefaultPXUnit(heightAfterResize);
+            }
 
             var leftOffset = ((window.innerWidth - widthAfterResize) / 2) - (horMargin / 2);
             var topOffset = ((window.innerHeight - heightAfterResize) / 2)  - (vertMargin / 2);

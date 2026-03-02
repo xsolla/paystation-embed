@@ -416,7 +416,7 @@ module.exports = (function () {
     };
 
     LightBox.prototype.close = function () {
-        this.closeFrame();
+        this.triggerEvent('close');
     };
 
     LightBox.prototype.on = function () {

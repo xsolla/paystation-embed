@@ -15,7 +15,7 @@ Features:
 
 #### Linking to Xsolla CDN
 
-Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.3/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.3/widget.min.js). Use this URL to integrate script on your website.
+Script is located on our CDN and is available here: [https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.4/widget.min.js](https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.4/widget.min.js). Use this URL to integrate script on your website.
 
 ### Script Loading
 

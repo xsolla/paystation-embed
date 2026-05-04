@@ -22,7 +22,8 @@ module.exports = (function () {
         spinner: 'xsolla',
         spinnerColor: null,
         spinnerUrl: null,
-        spinnerRotationPeriod: 0
+        spinnerRotationPeriod: 0,
+        allow: 'payment'
     };
     var DEFAULT_OPTIONS = Object.assign({}, COMMON_OPTIONS, {
         width: null,
@@ -123,7 +124,7 @@ module.exports = (function () {
             iframe.src = settings.url;
             iframe.frameBorder = '0';
             iframe.allowFullscreen = true;
-            iframe.allow = 'payment';
+            iframe.allow = options.allow;
 
             var spinner = document.createElement('div');
             spinner.className = settings.prefix + '-spinner';

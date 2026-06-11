@@ -1,5 +1,8 @@
 # Xsolla Pay Station Widget
 
+![License](https://img.shields.io/github/license/xsolla/paystation-embed)
+![Latest release](https://img.shields.io/github/v/release/xsolla/paystation-embed)
+
 ## Integration Guide
 
 Xsolla team created a script to simplify the integration of Pay Station into your website. Please note: for the proper work of widget please make sure that you pass the ‘access_token’. More information about getting ‘access_token’ parameter is available [here](https://developers.xsolla.com/api/pay-station/operation/create-token/).
@@ -205,3 +208,12 @@ in a local environment due to an outdated version of Node.js.
 In some cases, using the Node.js version specified in the .nvmrc file might help, 
 but if that doesn’t work, you can try building the project using Docker 
 and replacing the contents of the dist directory on your local machine with the one from the Docker container.
+
+## Support
+
+- **GitHub Issues:** [github.com/xsolla/paystation-embed/issues](https://github.com/xsolla/paystation-embed/issues)
+- **Developer portal:** [developers.xsolla.com](https://developers.xsolla.com)
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).

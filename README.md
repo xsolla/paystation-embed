@@ -10,7 +10,7 @@ Xsolla team created a script to simplify the integration of Pay Station into you
 [See Demo](http://livedemo.xsolla.com/pay-station/)
 
 Features:
-* the most appropriate interface depending on the type of device
+* opening of Pay Station in a new browser tab
 * tracking of events happening with Pay Station
 * compliant with the AMD and CommonJS specification for defining modules
 
@@ -98,9 +98,8 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
     * **spinnerColor** — Color of the spinner, not set by default
     * **spinnerUrl** — URL of custom spinner, default is null
     * **spinnerRotationPeriod** — Rotation period of custom spinner, default 0
-* **childWindow** — Options for child window that contains Pay Station. Suitable for mobile version
+* **childWindow** — Options for the browser tab that contains Pay Station
     * **target** — The target option specifies where to open the Pay Station window, can be '_blank', '_self', '_parent', default is '_blank'
-* **iframeOnly** — Open Pay Station in iframe on all devices
 * **queryParams** — Query params to be added to Pay Station url
 
 ### Widget API
@@ -110,7 +109,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 You can refer to the widget object, using the following methods:
 
 * **init(options)** — Parameter setting
-* **open** — Opening of payment interface (Pay Station). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
+* **open** — Opening of payment interface (Pay Station). Opens Pay Station in a new browser tab. Because the tab has to be opened from a user action, see [Troubleshooting](#troubleshooting) below.
 * **on(events, handler)** — Attach an event handler function for one or more events to the widget.
     * **events** (string) — One or more space-separated event types, such as "open" or "close status".
     * **handler** (function) — A function to execute when the event is triggered.

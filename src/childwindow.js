@@ -89,6 +89,11 @@ module.exports = (function () {
             case '_blank':
             default:
                 this.childWindow = global.window.open(url);
+
+                if (!this.childWindow) {
+                    return false;
+                }
+
                 this.childWindow.focus();
                 addHandlers();
 
@@ -106,6 +111,8 @@ module.exports = (function () {
         }
 
         this.triggerEvent('open');
+
+        return true;
     };
 
     ChildWindow.prototype.close = function () {

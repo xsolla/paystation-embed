@@ -49,12 +49,15 @@ module.exports = (function () {
         lightbox: {},
         childWindow: {},
         host: 'secure.xsolla.com',
-        iframeOnly: false,
+        openMode: null,
         consentId: null
     };
     var SANDBOX_PAYSTATION_URL = 'https://sandbox-secure.xsolla.com/paystation2/?';
     var EVENT_NAMESPACE = '.xpaystation-widget';
     var ATTR_PREFIX = 'data-xpaystation-widget-open';
+
+    var OPEN_MODES = ['window', 'iframe', 'auto'];
+    var DEFAULT_OPEN_MODE = 'window';
 
     /** Private Members **/
     App.prototype.config = {};
@@ -104,6 +107,12 @@ module.exports = (function () {
         if (this.isInitiated === undefined) {
             this.throwError('Initialize widget before opening');
         }
+    };
+
+    App.prototype.getOpenMode = function () {
+        return OPEN_MODES.indexOf(this.config.openMode) === -1 ?
+            DEFAULT_OPEN_MODE :
+            this.config.openMode;
     };
 
     App.prototype.throwError = function (message) {
@@ -222,7 +231,12 @@ module.exports = (function () {
         }
 
         this.postMessage = null;
-        if ((new Device).isMobile() && !this.config.iframeOnly) {
+
+        var isMobile = (new Device).isMobile();
+        var openMode = this.getOpenMode();
+        var openInChildWindow = openMode === 'window' || (openMode === 'auto' && isMobile);
+
+        function openChildWindow(config) {
             var childWindow = new ChildWindow;
             childWindow.on('open', function handleOpen() {
                 that.postMessage = childWindow.getPostMessage();
@@ -248,10 +262,19 @@ module.exports = (function () {
             childWindow.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             childWindow.on(App.eventTypes.FCP, handleFcp);
             childWindow.on(App.eventTypes.ERROR, handleError);
-            childWindow.open(url, this.config.childWindow);
+
+            if (childWindow.open(url, config.childWindow) === false) {
+                childWindow.off();
+                return false;
+            }
+
             that.childWindow = childWindow;
-        } else {
-            var lightBox = new LightBox((new Device).isMobile() && this.config.iframeOnly);
+
+            return true;
+        }
+
+        function openLightBox(config) {
+            var lightBox = new LightBox(isMobile);
             lightBox.on('open', function handleOpen() {
                 that.postMessage = lightBox.getPostMessage();
                 that.triggerEvent(App.eventTypes.OPEN);
@@ -276,8 +299,12 @@ module.exports = (function () {
             lightBox.on(App.eventTypes.USER_COUNTRY, handleUserLocale);
             lightBox.on(App.eventTypes.FCP, handleFcp);
             lightBox.on(App.eventTypes.ERROR, handleError);
-            lightBox.openFrame(url, this.config.lightbox);
+            lightBox.openFrame(url, config.lightbox);
             that.childWindow = lightBox;
+        }
+
+        if (!openInChildWindow || openChildWindow(this.config) === false) {
+            openLightBox(this.config);
         }
     };
 

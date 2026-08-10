@@ -83,21 +83,6 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **access_token** — Access token
 * **host** - Host for performing requests. The default value is **secure.xsolla.com**
 * **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead of **host**
-* **lightbox** — Options for modal dialog that contains frame of Pay Station
-    * **width** — Width of lightbox frame. If null, depends on Pay Station width. Default is null
-    * **height** — Height of lightbox frame. If null, depends on Pay Station height. Default is '100%'
-    * **zIndex** — Property controls the vertical stacking order, default is 1000
-    * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
-    * **overlayBackground** — Background of the overlay, default is '#000000'
-    * **modal** - Lightbox frame cannot be closed, default false
-    * **closeByClick** — Toggle if clicking the overlay should close lightbox, default true
-    * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
-    * **contentBackground** — Background of the frame, default is '#ffffff'
-    * **contentMargin** — margin around frame, default '10px',
-    * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round', 'none' or 'custom', default is the first one
-    * **spinnerColor** — Color of the spinner, not set by default
-    * **spinnerUrl** — URL of custom spinner, default is null
-    * **spinnerRotationPeriod** — Rotation period of custom spinner, default 0
 * **childWindow** — Options for the browser tab that contains Pay Station
     * **target** — The target option specifies where to open the Pay Station window, can be '_blank', '_self', '_parent', default is '_blank'
 * **queryParams** — Query params to be added to Pay Station url

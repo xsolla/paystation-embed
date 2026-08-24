@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.0
+- [breaking] Pay Station now opens in a new browser tab on all devices. The `iframeOnly` option was removed and is ignored if passed
+
 ## 1.5.1
 - [fix] fixed issues in Pay Station 4 related to changing iOS device orientation in Opera, Google Chrome, and Mozilla Firefox browsers.
 

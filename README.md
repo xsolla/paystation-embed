@@ -10,7 +10,7 @@ Xsolla team created a script to simplify the integration of Pay Station into you
 [See Demo](http://livedemo.xsolla.com/pay-station/)
 
 Features:
-* the most appropriate interface depending on the type of device
+* opening of Pay Station in a new browser tab
 * tracking of events happening with Pay Station
 * compliant with the AMD and CommonJS specification for defining modules
 
@@ -83,24 +83,8 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 * **access_token** — Access token
 * **host** - Host for performing requests. The default value is **secure.xsolla.com**
 * **sandbox** — Set **true** to test the payment process, sandbox-secure.xsolla.com will be used instead of **host**
-* **lightbox** — Options for modal dialog that contains frame of Pay Station
-    * **width** — Width of lightbox frame. If null, depends on Pay Station width. Default is null
-    * **height** — Height of lightbox frame. If null, depends on Pay Station height. Default is '100%'
-    * **zIndex** — Property controls the vertical stacking order, default is 1000
-    * **overlayOpacity** — Opacity of the overlay (from 0 to 1), default is '.6'
-    * **overlayBackground** — Background of the overlay, default is '#000000'
-    * **modal** - Lightbox frame cannot be closed, default false
-    * **closeByClick** — Toggle if clicking the overlay should close lightbox, default true
-    * **closeByKeyboard** — Toggle if pressing of ESC key should close lightbox, default true
-    * **contentBackground** — Background of the frame, default is '#ffffff'
-    * **contentMargin** — margin around frame, default '10px',
-    * **spinner** — Type of animated loading spinner, can be 'xsolla', 'round', 'none' or 'custom', default is the first one
-    * **spinnerColor** — Color of the spinner, not set by default
-    * **spinnerUrl** — URL of custom spinner, default is null
-    * **spinnerRotationPeriod** — Rotation period of custom spinner, default 0
-* **childWindow** — Options for child window that contains Pay Station. Suitable for mobile version
+* **childWindow** — Options for the browser tab that contains Pay Station
     * **target** — The target option specifies where to open the Pay Station window, can be '_blank', '_self', '_parent', default is '_blank'
-* **iframeOnly** — Open Pay Station in iframe on all devices
 * **queryParams** — Query params to be added to Pay Station url
 
 ### Widget API
@@ -110,7 +94,7 @@ define(['PATH_TO_WIDGET/embed'], function (XPayStationWidget) {
 You can refer to the widget object, using the following methods:
 
 * **init(options)** — Parameter setting
-* **open** — Opening of payment interface (Pay Station). Opens a modal window with an iframe that appears over the site content for desktop, and in the new window for mobile and tablet devices.
+* **open** — Opening of payment interface (Pay Station). Opens Pay Station in a new browser tab. Because the tab has to be opened from a user action, see [Troubleshooting](#troubleshooting) below.
 * **on(events, handler)** — Attach an event handler function for one or more events to the widget.
     * **events** (string) — One or more space-separated event types, such as "open" or "close status".
     * **handler** (function) — A function to execute when the event is triggered.

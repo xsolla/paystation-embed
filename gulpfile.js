@@ -1,3 +1,5 @@
+var fs = require('fs');
+var path = require('path');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var uglify = require('gulp-uglify');
@@ -11,6 +13,21 @@ var sassify = require('sassify');
 var stringify = require('stringify');
 var watchify = require('watchify');
 var gulpif = require('gulp-if');
+
+var pkg = require('./package.json');
+var versionFile = path.join(__dirname, 'src', 'version.js');
+
+function writeVersionFile() {
+    var contents = 'module.exports = \'' + pkg.version + '\';\n';
+
+    // rewriting with identical contents would needlessly re-trigger watchify
+    if (fs.existsSync(versionFile) && fs.readFileSync(versionFile, 'utf8') === contents) {
+        return;
+    }
+
+    fs.writeFileSync(versionFile, contents);
+    gutil.log('Version', gutil.colors.cyan(pkg.version), '->', 'src/version.js');
+}
 
 function setupBrowserify(watch) {
     var bundleOptions = {
@@ -68,7 +85,9 @@ function runBundle(bundler, watch) {
         .pipe(gulpif(watch, browserSync.reload({stream: true, once: true})));
 }
 
-gulp.task('build', function () {
+gulp.task('version', writeVersionFile);
+
+gulp.task('build', ['version'], function () {
     setupBrowserify(false);
 });
 
@@ -83,7 +102,7 @@ gulp.task('browser-sync', function () {
     });
 });
 
-gulp.task('serve', ['browser-sync'], function () {
+gulp.task('serve', ['version', 'browser-sync'], function () {
     setupBrowserify(true);
 
     gulp.watch(['example/*.html', 'dist/*.js']).on('change', browserSync.reload); //all the other files are managed by watchify
